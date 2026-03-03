@@ -28,5 +28,20 @@
       "N° Asistentes": ""
     },
     "fechaSubida": "2026-03-03T05:01:26.764Z"
+  },
+  {
+    "id": 1772554779032,
+    "titulo": "Hola",
+    "categoria": "Produccion",
+    "fecha": "2026-03-03",
+    "archivoPdfImg": "",
+    "enlaceVideo": "",
+    "etiquetas": [],
+    "detalles": {
+      "Número de Lote": "",
+      "Cantidad Producida": "",
+      "Responsable de Turno": ""
+    },
+    "fechaSubida": "2026-03-03T16:19:39.032Z"
   }
 ]
