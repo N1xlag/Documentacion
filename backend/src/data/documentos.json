@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1772513520604,
+    "titulo": "Test",
+    "categoria": "Produccion",
+    "fecha": "2026-03-03",
+    "enlaceVideo": "",
+    "etiquetas": [
+      "macetas"
+    ],
+    "detalles": {
+      "Número de Lote": "50",
+      "Cantidad Producida": "100",
+      "Responsable de Turno": ""
+    },
+    "fechaSubida": "2026-03-03T04:52:00.604Z"
+  },
+  {
+    "id": 1772514086764,
+    "titulo": "rte",
+    "categoria": "Clases/Reuniones",
+    "fecha": "2026-03-03",
+    "archivoPdfImg": "/uploads/1772514086708-923469226-Gemini_Generated_Image_htnsa6htnsa6htns.png",
+    "enlaceVideo": "",
+    "etiquetas": [],
+    "detalles": {
+      "Materia/Tema": "",
+      "N° Asistentes": ""
+    },
+    "fechaSubida": "2026-03-03T05:01:26.764Z"
+  }
+]
