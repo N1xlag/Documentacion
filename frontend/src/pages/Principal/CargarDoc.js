@@ -3,10 +3,6 @@ import { mostrarPopup } from '../../Components/Popup.js';
 import { api } from '../../services/api.js';
 import './CargarDoc.css';
 
-// =============================================
-// UTILIDADES
-// =============================================
-
 const obtenerFechaHoy = () => {
     const hoy = new Date();
     const año = hoy.getFullYear();
@@ -15,15 +11,10 @@ const obtenerFechaHoy = () => {
     return `${año}-${mes}-${dia}`;
 };
 
-
-// =============================================
-// CAMPOS DINÁMICOS POR CATEGORÍA
-// =============================================
-
 const crearCamposProduccion = () => {
-    const cLote = InputGenerico('Número de Lote', 'Ej: L-45');
-    const cCantidad = InputGenerico('Cantidad Producida', 'Ej: 500', 'number');
-    const cResponsable = InputGenerico('Responsable de Turno', 'Ej: Ing. Perez');
+    const cLote = InputGenerico('Producto', 'Ej: Macetas Biodegradables');
+    const cCantidad = InputGenerico('Cantidad', 'Ej: 50', 'number');
+    const cResponsable = InputGenerico('Materia', 'Ej: IO 2');
     return [cLote.contenedor, cCantidad.contenedor, cResponsable.contenedor];
 };
 
@@ -40,16 +31,12 @@ const crearCamposMantenimiento = () => {
 };
 
 
-// =============================================
-// COMPONENTES VISUALES
-// =============================================
-
 const crearLadoIzquierdo = () => {
     const ladoIzq = document.createElement('div');
     ladoIzq.className = 'cargar-lado-izq';
 
     const titulo = document.createElement('h3');
-    titulo.innerText = 'Evidencia Visual/Documental';
+    titulo.innerText = 'Subir Archivo';
     
     const inputArchivo = document.createElement('input');
     inputArchivo.type = 'file';
@@ -62,7 +49,7 @@ const crearLadoIzquierdo = () => {
     
     const inputVideo = document.createElement('input');
     inputVideo.type = 'text';
-    inputVideo.placeholder = 'Enlace de YouTube o Drive para videos...';
+    inputVideo.placeholder = 'Enlace de Video';
     inputVideo.className = 'cargar-input-video';
 
     ladoIzq.append(titulo, inputArchivo, textoO, inputVideo);
@@ -79,15 +66,11 @@ const crearContenedorDinamico = () => {
 
 const crearBotonGuardar = () => {
     const btn = document.createElement('button');
-    btn.innerText = 'GUARDAR REGISTRO';
+    btn.innerText = 'GUARDAR RESPALDO';
     btn.className = 'btn btn-primary cargar-btn-guardar';
     return btn;
 };
 
-
-// =============================================
-// LÓGICA DE NEGOCIO
-// =============================================
 
 const manejarCambioCategoria = (categoria, contenedorDinamico) => {
     contenedorDinamico.innerHTML = '';

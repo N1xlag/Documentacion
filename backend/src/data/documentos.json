@@ -43,5 +43,21 @@
       "Responsable de Turno": ""
     },
     "fechaSubida": "2026-03-03T16:19:39.032Z"
+  },
+  {
+    "id": 1772564206957,
+    "titulo": "PPI",
+    "categoria": "Activos/Mantenimiento",
+    "fecha": "2025-11-06",
+    "archivoPdfImg": "",
+    "enlaceVideo": "",
+    "etiquetas": [
+      "Hola"
+    ],
+    "detalles": {
+      "Equipo/Maquinaria": "",
+      "Estado post-mantenimiento": "Operativo"
+    },
+    "fechaSubida": "2026-03-03T18:56:46.957Z"
   }
 ]

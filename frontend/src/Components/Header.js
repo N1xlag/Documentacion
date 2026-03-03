@@ -19,10 +19,10 @@ export const Header = (onNavigate) => {
     navButtons.style.gap = '10px';
 
     const btnSubir = document.createElement('button');
-    btnSubir.innerText = '➕ Subir Evidencia';
+    btnSubir.innerText = 'Subir Evidencia';
     
     const btnBuscar = document.createElement('button');
-    btnBuscar.innerText = '🔍 Buscador';
+    btnBuscar.innerText = 'Buscador';
 
     // Estilos base de los botones
     [btnSubir, btnBuscar].forEach(btn => {
