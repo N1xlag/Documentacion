@@ -1,94 +1,153 @@
+/* ======== CONTENEDOR PRINCIPAL ======== */
 .cargar-contenedor {
     display: flex;
-    gap: 40px;
-    margin-top: 20px;
-    background-color: var(--bg-principal);
-    padding: 30px;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
-    /* Agregamos max-height para que no se salga de la pantalla si hay muchos campos */
-    max-height: 80vh; 
-    overflow-y: auto; 
+    gap: 30px; /* Separación entre las dos tarjetas */
+    padding: 20px;
+    max-width: 1300px;
+    margin: 0 auto;
+    align-items: flex-start;
+}
+
+/* ======== LAS DOS TARJETAS BLANCAS ======== */
+.cargar-lado-izq, .cargar-lado-der {
+    background-color: #ffffff;
+    border-radius: var(--border-radius-lg);
+    padding: 35px;
+    box-shadow: var(--shadow-xl);
 }
 
 .cargar-lado-izq {
-    flex: 1;
-    background-color: var(--bg-secundario);
-    padding: 40px;
-    text-align: center;
-    border-radius: var(--border-radius);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: fit-content; /* Para que no se estire de más */
-}
-
-.cargar-input-archivo {
-    margin-bottom: 15px;
-    padding: 10px;
-    background-color: var(--bg-principal);
-    border-radius: var(--border-radius-sm);
-    border: 1px solid var(--border-color);
-}
-
-.cargar-texto-separador {
-    margin: 15px 0;
-    color: var(--text-secundario);
-}
-
-.cargar-input-video {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
+    flex: 1; /* Ocupa 1 parte del espacio */
+    min-width: 320px;
 }
 
 .cargar-lado-der {
-    flex: 2;
+    flex: 2; /* Ocupa el doble de espacio que la izquierda */
 }
 
-.cargar-dinamico {
-    background-color: var(--bg-secundario);
-    padding: 15px;
-    border-radius: var(--border-radius);
-    margin-bottom: 15px;
-    border-left: 4px solid var(--color-primario);
+/* Títulos dentro de las tarjetas */
+.cargar-lado-izq h3, .cargar-lado-der h3 {
+    color: var(--color-secundario); /* Naranja oscuro */
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
 }
 
-.cargar-btn-guardar {
-    margin-top: 10px;
+/* ======== ESTILOS DE LOS INPUTS "GRANDES" ======== */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-principal); /* Azul oscuro */
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.form-input {
     width: 100%;
+    padding: 16px 18px; /* ¡Inputs bien gorditos y legibles! */
     font-size: 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #f8fafc;
+    color: #1e293b;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    border-color: var(--color-primario);
+    box-shadow: 0 0 0 4px rgba(241, 160, 68, 0.2);
+    outline: none;
+    background-color: #ffffff;
+}
+
+/* ======== CARRITO DE ARCHIVOS ======== */
+.cargar-input-archivo, .cargar-input-video {
+    width: 100%;
     padding: 15px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    background-color: #f8fafc;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.cargar-texto-separador {
+    text-align: center;
+    font-weight: bold;
+    color: var(--text-secundario);
+    margin: 20px 0;
 }
 
 .cargar-lista-archivos-visual {
-    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    text-align: left; /* Alineamos a la izquierda para que se lea mejor */
+    gap: 10px;
 }
 
 .cargar-item-archivo {
-    background-color: var(--bg-principal);
-    border: 1px solid var(--border-color);
-    padding: 8px 12px;
-    border-radius: var(--border-radius-sm);
-    font-size: 13px;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-weight: 500;
 }
 
 .cargar-btn-eliminar-archivo {
     cursor: pointer;
-    background-color: #ffeaea;
+    background-color: #fee2e2;
+    color: #ef4444;
     border-radius: 4px;
-    padding: 2px 6px;
+    padding: 4px 8px;
     transition: background-color 0.2s;
+    font-weight: bold;
 }
 
 .cargar-btn-eliminar-archivo:hover {
-    background-color: #ffcccc;
+    background-color: #fca5a5;
+}
+
+/* ======== BOTONES DE ACCIÓN ======== */
+.cargar-acciones {
+    display: flex;
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid var(--border-color);
+}
+
+.cargar-btn-guardar {
+    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%);
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 12px rgba(217, 94, 49, 0.3);
+    transition: all 0.2s;
+}
+
+.cargar-btn-guardar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(217, 94, 49, 0.4);
+    filter: brightness(1.1);
 }

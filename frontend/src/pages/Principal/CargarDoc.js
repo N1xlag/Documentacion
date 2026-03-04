@@ -12,9 +12,9 @@ export const CargarDoc = () => {
     ladoIzq.className = 'cargar-lado-izq';
 
     const tituloArchivo = document.createElement('h3');
-    tituloArchivo.innerText = 'Subir';
+    tituloArchivo.innerText = 'Subir Archivo';
     
-    // 1. NUESTRO CARRITO DE ARCHIVOS (El array donde guardaremos todo)
+    // 1. NUESTRO CARRITO DE ARCHIVOS
     let archivosParaSubir = [];
 
     const inputArchivo = document.createElement('input');
@@ -27,27 +27,23 @@ export const CargarDoc = () => {
     const contenedorListaArchivos = document.createElement('div');
     contenedorListaArchivos.className = 'cargar-lista-archivos-visual';
 
-    // Función que dibuja los nombres de los archivos en pantalla
     const actualizarListaVisual = () => {
-        contenedorListaArchivos.innerHTML = ''; // Limpiamos la lista visual
+        contenedorListaArchivos.innerHTML = ''; 
 
         archivosParaSubir.forEach((archivo, index) => {
             const item = document.createElement('div');
             item.className = 'cargar-item-archivo';
             
-            // Iconito dependiendo si es PDF o Imagen
             const icono = archivo.name.toLowerCase().endsWith('.pdf') ? '' : '';
             const nombreArchivo = document.createElement('span');
             nombreArchivo.innerText = `${icono} ${archivo.name}`;
 
-            // Botón para eliminar un archivo si nos equivocamos
             const btnEliminar = document.createElement('span');
             btnEliminar.innerText = ' X ';
             btnEliminar.className = 'cargar-btn-eliminar-archivo';
             
-            // Si hacen clic en la X, lo sacamos del array y volvemos a dibujar
             btnEliminar.addEventListener('click', () => {
-                archivosParaSubir.splice(index, 1); // Quita 1 elemento en esa posición
+                archivosParaSubir.splice(index, 1); 
                 actualizarListaVisual();
             });
 
@@ -58,15 +54,10 @@ export const CargarDoc = () => {
 
     // 3. EVENTO: Cuando el usuario elige un archivo
     inputArchivo.addEventListener('change', (evento) => {
-        const nuevosArchivos = Array.from(evento.target.files); // Convertimos a Array normal
-        
-        // Los agregamos uno por uno a nuestro "carrito"
-        nuevosArchivos.forEach(archivo => {
-            archivosParaSubir.push(archivo);
-        });
-
-        actualizarListaVisual(); // Dibujamos la nueva lista
-        inputArchivo.value = ''; // Limpiamos el input por si quieren subir el mismo archivo después
+        const nuevosArchivos = Array.from(evento.target.files); 
+        nuevosArchivos.forEach(archivo => archivosParaSubir.push(archivo));
+        actualizarListaVisual(); 
+        inputArchivo.value = ''; 
     });
 
     const textoO = document.createElement('p');
@@ -75,15 +66,17 @@ export const CargarDoc = () => {
     
     const inputVideo = document.createElement('input');
     inputVideo.type = 'text';
-    inputVideo.placeholder = 'Enlace de YouTube o Drive para videos...';
+    inputVideo.placeholder = 'Enlace de video...';
     inputVideo.className = 'cargar-input-video';
 
-    // Agregamos todo al lado izquierdo (incluyendo la nueva lista visual)
     ladoIzq.append(tituloArchivo, inputArchivo, contenedorListaArchivos, textoO, inputVideo);
 
     // ======== LADO DERECHO: FORMULARIO DINÁMICO ========
     const ladoDer = document.createElement('div');
     ladoDer.className = 'cargar-lado-der';
+
+    const tituloFormulario = document.createElement('h3');
+    tituloFormulario.innerText = 'Detalles';
 
     const categorias = ['Seleccione una...', 'Producción', 'Clases / Reuniones', 'Activos / Inventario', 'Administrativo / RRHH', 'Propio', 'Otros'];
     
@@ -144,7 +137,7 @@ export const CargarDoc = () => {
 
     const btnGuardar = document.createElement('button');
     btnGuardar.innerText = 'GUARDAR REGISTRO';
-    btnGuardar.className = 'btn btn-primary cargar-btn-guardar';
+    btnGuardar.className = 'cargar-btn-guardar'; // Clase actualizada para el nuevo CSS
 
     // ======== LÓGICA DE GUARDADO ========
     btnGuardar.addEventListener('click', async () => {
@@ -158,7 +151,6 @@ export const CargarDoc = () => {
         try {
             const listaArchivosSubidos = [];
             
-            // AHORA RECORREMOS NUESTRO CARRITO DE COMPRAS (archivosParaSubir)
             if (archivosParaSubir.length > 0) {
                 for (const archivoFisico of archivosParaSubir) {
                     const rutaServidor = await api.subirArchivoFisico(archivoFisico);
@@ -177,7 +169,7 @@ export const CargarDoc = () => {
             });
 
             const nuevoRegistro = {
-                id: Date.now(), 
+                id: Date.now().toString(), // Aseguramos que el ID sea string para Prisma
                 titulo: campoTitulo.input.value,
                 descripcion: campoDescripcion.input.value,
                 fecha: campoFecha.input.value,
@@ -196,11 +188,8 @@ export const CargarDoc = () => {
             // LIMPIEZA
             campoTitulo.input.value = ''; campoDescripcion.input.value = ''; campoEtiquetas.input.value = '';
             inputVideo.value = ''; 
-            
-            // Vaciamos el carrito y la vista
             archivosParaSubir = [];
             actualizarListaVisual();
-            
             campoCategoria.input.value = 'Seleccione una...';
             contenedorDinamico.innerHTML = ''; contenedorDinamico.style.display = 'none';
         } catch (error) {
@@ -212,7 +201,12 @@ export const CargarDoc = () => {
         }
     });
 
-    ladoDer.append(campoTitulo.contenedor, campoDescripcion.contenedor, campoFecha.contenedor, campoGestion.contenedor, campoEtiquetas.contenedor, campoCategoria.contenedor, contenedorDinamico, btnGuardar);
+    // CAJA DE ACCIONES PARA ALINEAR EL BOTÓN (Diseño nuevo)
+    const cajaAcciones = document.createElement('div');
+    cajaAcciones.className = 'cargar-acciones';
+    cajaAcciones.append(btnGuardar);
+
+    ladoDer.append(tituloFormulario, campoTitulo.contenedor, campoDescripcion.contenedor, campoFecha.contenedor, campoGestion.contenedor, campoEtiquetas.contenedor, campoCategoria.contenedor, contenedorDinamico, cajaAcciones);
     contenedorPrincipal.append(ladoIzq, ladoDer);
     return contenedorPrincipal;
 };

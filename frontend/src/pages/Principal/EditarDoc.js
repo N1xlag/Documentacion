@@ -1,7 +1,7 @@
-import { InputGenerico } from '../../components/Input.js'; // Importado tal como lo tienes
+import { InputGenerico } from '../../components/Input.js';
 import { mostrarPopup } from '../../components/Popup.js';
 import { api } from '../../services/api.js';
-import './CargarDoc.css'; 
+import './CargarDoc.css'; // Usa los mismos estilos
 
 export const EditarDoc = (documentoOriginal, navegarA) => {
     const contenedorPrincipal = document.createElement('div');
@@ -12,22 +12,23 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
     ladoIzq.className = 'cargar-lado-izq';
 
     const tituloArchivo = document.createElement('h3');
-    tituloArchivo.innerText = 'Gestión de Archivos';
+    tituloArchivo.innerText = '⚙️ Gestión de Archivos';
     
-    // --- 1. ARCHIVOS QUE YA ESTABAN GUARDADOS ---
-    // Clonamos los archivos originales para poder borrarlos si queremos
+    // --- ARCHIVOS VIEJOS ---
     let archivosExistentes = documentoOriginal.archivosAdjuntos ? [...documentoOriginal.archivosAdjuntos] : [];
     
     const contenedorArchivosViejos = document.createElement('div');
-    contenedorArchivosViejos.style.marginBottom = '25px';
-    contenedorArchivosViejos.style.textAlign = 'left';
+    contenedorArchivosViejos.style.marginBottom = '30px';
 
     const renderizarArchivosExistentes = () => {
-        contenedorArchivosViejos.innerHTML = '<p style="font-weight:bold; margin-bottom:8px;">Archivos Guardados:</p>';
+        contenedorArchivosViejos.innerHTML = '<p class="form-label">Archivos Guardados Actualmente:</p>';
         
         if (archivosExistentes.length === 0) {
-            contenedorArchivosViejos.innerHTML += '<p style="font-size:13px; color:#666; font-style:italic;">No hay archivos guardados.</p>';
+            contenedorArchivosViejos.innerHTML += '<p style="font-size:13px; color:#64748b; font-style:italic;">No hay archivos guardados.</p>';
         } else {
+            const lista = document.createElement('div');
+            lista.className = 'cargar-lista-archivos-visual';
+            
             archivosExistentes.forEach((archivo, index) => {
                 const item = document.createElement('div');
                 item.className = 'cargar-item-archivo';
@@ -39,29 +40,27 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
                 const btnEliminar = document.createElement('span');
                 btnEliminar.innerText = ' ❌';
                 btnEliminar.className = 'cargar-btn-eliminar-archivo';
-                btnEliminar.title = "Eliminar este archivo del servidor";
+                btnEliminar.title = "Eliminar este archivo";
                 
-                // Si le dan a la X, lo sacamos de la lista de archivos viejos
                 btnEliminar.addEventListener('click', () => {
                     archivosExistentes.splice(index, 1);
                     renderizarArchivosExistentes();
                 });
 
                 item.append(nombre, btnEliminar);
-                contenedorArchivosViejos.append(item);
+                lista.append(item);
             });
+            contenedorArchivosViejos.append(lista);
         }
     };
     renderizarArchivosExistentes();
 
-    // --- 2. ARCHIVOS NUEVOS (El carrito de compras) ---
+    // --- ARCHIVOS NUEVOS ---
     let archivosParaSubir = [];
     
     const tituloNuevos = document.createElement('p');
     tituloNuevos.innerText = 'Agregar Nuevos Archivos:';
-    tituloNuevos.style.fontWeight = 'bold';
-    tituloNuevos.style.textAlign = 'left';
-    tituloNuevos.style.marginBottom = '8px';
+    tituloNuevos.className = 'form-label';
 
     const inputArchivo = document.createElement('input');
     inputArchivo.type = 'file';
@@ -109,7 +108,7 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
     inputVideo.type = 'text';
     inputVideo.placeholder = 'Enlace de YouTube o Drive para videos...';
     inputVideo.className = 'cargar-input-video';
-    inputVideo.value = documentoOriginal.enlaceVideo || ''; // PRE-LLENADO DE VIDEO
+    inputVideo.value = documentoOriginal.enlaceVideo || ''; 
 
     ladoIzq.append(tituloArchivo, contenedorArchivosViejos, tituloNuevos, inputArchivo, contenedorListaArchivos, textoO, inputVideo);
 
@@ -117,7 +116,9 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
     const ladoDer = document.createElement('div');
     ladoDer.className = 'cargar-lado-der';
 
-    // ¡TUS CATEGORÍAS EXACTAS!
+    const tituloFormulario = document.createElement('h3');
+    tituloFormulario.innerText = '✏️ Editar Registro';
+
     const categorias = ['Seleccione una...', 'Producción', 'Clases / Reuniones', 'Activos / Inventario', 'Administrativo / RRHH', 'Propio', 'Otros'];
     
     const campoTitulo = InputGenerico('Título del Documento', 'Ej: Informe del Primer Ciclo de Produccion');
@@ -154,7 +155,6 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
     const contenedorDinamico = document.createElement('div');
     contenedorDinamico.className = 'cargar-dinamico';
 
-    // ¡TUS CAMPOS DINÁMICOS EXACTOS!
     const renderizarCamposDinamicos = (seleccion) => {
         contenedorDinamico.innerHTML = ''; 
         if (seleccion === 'Seleccione una...' || seleccion === 'Otros') {
@@ -174,7 +174,6 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
             contenedorDinamico.append(InputGenerico('Tipo', '', 'select', ['Investigación', 'Proyecto', 'Guia', 'Artículo', 'Manual']).contenedor, InputGenerico('Autor(es)', 'Quién(es) lo desarrolló').contenedor, InputGenerico('Área o Materia Vinculada', 'Ej: IO2').contenedor);
         }
         
-        // ¡LA MAGIA DE PRE-LLENAR LOS DETALLES AHORA SÍ FUNCIONARÁ!
         const inputsDinamicos = contenedorDinamico.querySelectorAll('.form-input');
         inputsDinamicos.forEach(input => {
             const nombreCampo = input.dataset.nombre;
@@ -185,14 +184,19 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
     };
 
     campoCategoria.input.addEventListener('change', (e) => renderizarCamposDinamicos(e.target.value));
-    
-    // Dibujamos los campos que corresponden al abrir
     renderizarCamposDinamicos(documentoOriginal.categoria);
 
+    // Botones
     const btnGuardar = document.createElement('button');
     btnGuardar.innerText = 'ACTUALIZAR REGISTRO';
-    btnGuardar.className = 'btn btn-primary cargar-btn-guardar';
-    btnGuardar.style.backgroundColor = '#28a745'; 
+    btnGuardar.className = 'cargar-btn-guardar';
+
+    const btnCancelar = document.createElement('button');
+    btnCancelar.innerText = 'CANCELAR';
+    btnCancelar.className = 'cargar-btn-guardar';
+    btnCancelar.style.background = '#64748b'; // Color gris para cancelar
+    btnCancelar.style.boxShadow = 'none';
+    btnCancelar.addEventListener('click', () => navegarA('respaldos'));
 
     // ======== LÓGICA DE ACTUALIZACIÓN ========
     btnGuardar.addEventListener('click', async () => {
@@ -206,7 +210,6 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
         try {
             const listaArchivosNuevos = [];
             
-            // Subimos los nuevos (si subieron algo)
             if (archivosParaSubir.length > 0) {
                 for (const archivoFisico of archivosParaSubir) {
                     const rutaServidor = await api.subirArchivoFisico(archivoFisico);
@@ -217,7 +220,6 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
                 }
             }
 
-            // Juntamos los archivos que decidimos conservar con los nuevecitos
             const todosLosArchivos = [...archivosExistentes, ...listaArchivosNuevos];
 
             const detallesEspecificos = {};
@@ -232,7 +234,7 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
                 fecha: campoFecha.input.value,
                 gestion: campoGestion.input.value,
                 categoria: campoCategoria.input.value,
-                archivosAdjuntos: todosLosArchivos, // Guardamos la lista final de archivos
+                archivosAdjuntos: todosLosArchivos,
                 enlaceVideo: inputVideo.value,
                 etiquetas: campoEtiquetas.input.value.split(',').map(tag => tag.trim()).filter(tag => tag !== ''),
                 detalles: detallesEspecificos,
@@ -255,15 +257,12 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
         }
     });
 
-    // Botón Cancelar
-    const btnCancelar = document.createElement('button');
-    btnCancelar.innerText = 'Cancelar Edición';
-    btnCancelar.className = 'btn';
-    btnCancelar.style.width = '100%';
-    btnCancelar.style.marginTop = '10px';
-    btnCancelar.addEventListener('click', () => navegarA('respaldos'));
+    // CAJA DE ACCIONES PARA ALINEAR LOS BOTONES A LA DERECHA
+    const cajaAcciones = document.createElement('div');
+    cajaAcciones.className = 'cargar-acciones';
+    cajaAcciones.append(btnCancelar, btnGuardar);
 
-    ladoDer.append(campoTitulo.contenedor, campoDescripcion.contenedor, campoFecha.contenedor, campoGestion.contenedor, campoEtiquetas.contenedor, campoCategoria.contenedor, contenedorDinamico, btnGuardar, btnCancelar);
+    ladoDer.append(tituloFormulario, campoTitulo.contenedor, campoDescripcion.contenedor, campoFecha.contenedor, campoGestion.contenedor, campoEtiquetas.contenedor, campoCategoria.contenedor, contenedorDinamico, cajaAcciones);
     contenedorPrincipal.append(ladoIzq, ladoDer);
     return contenedorPrincipal;
 };

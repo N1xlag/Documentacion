@@ -6,161 +6,142 @@ export const Buscador = async () => {
     const contenedorPrincipal = document.createElement('div');
     contenedorPrincipal.className = 'buscador-contenedor';
 
-    contenedorPrincipal.innerHTML = '<h3>Cargando La Biblioteca...</h3>';
-    let documentos = await api.obtenerDocumentos();
-    contenedorPrincipal.innerHTML = ''; 
+    // Traemos los datos de PostgreSQL
+    let todosLosDocumentos = [];
+    try {
+        todosLosDocumentos = await api.obtenerDocumentos();
+    } catch (error) {
+        console.error(error);
+        contenedorPrincipal.innerHTML = '<h3 style="color:red; text-align:center;">Error al cargar la base de datos.</h3>';
+        return contenedorPrincipal;
+    }
 
-    // ======== LADO IZQUIERDO: FILTROS ========
+    // ======== PANEL IZQUIERDO: FILTROS ========
     const panelFiltros = document.createElement('div');
     panelFiltros.className = 'buscador-panel-filtros';
 
     const tituloFiltros = document.createElement('h3');
-    tituloFiltros.innerText = 'Filtros';
-    tituloFiltros.style.marginBottom = '20px';
+    tituloFiltros.innerText = 'FILTROS';
 
-    // 1. Filtro de Texto
-    const labelBusqueda = document.createElement('label');
-    labelBusqueda.innerText = 'Búsqueda (Título/Etiquetas)';
-    const inputBusqueda = document.createElement('input');
-    inputBusqueda.type = 'text';
-    inputBusqueda.placeholder = 'Buscar';
-    inputBusqueda.className = 'buscador-input';
-
-    // 2. Filtro de Categoría
-    const labelCategoria = document.createElement('label');
-    labelCategoria.innerText = 'Filtro por Categoría';
-    const selectCategoria = document.createElement('select');
-    selectCategoria.className = 'buscador-input';
-    const categorias = ['Todas', 'Producción', 'Clases / Reuniones', 'Activos / Inventario', 'Administrativo / RRHH', 'Propio', 'Otros'];
-    categorias.forEach(cat => {
-        const op = document.createElement('option');
-        op.value = cat;
-        op.innerText = cat;
-        selectCategoria.append(op);
-    });
-
-    // 3. Filtro de Gestión (¡Automático!)
-    const labelGestion = document.createElement('label');
-    labelGestion.innerText = 'Filtro por Gestión / Semestre';
-    const selectGestion = document.createElement('select');
-    selectGestion.className = 'buscador-input';
-
-    // Siempre agregamos la opción "Todas" primero
-    const opcionTodas = document.createElement('option');
-    opcionTodas.value = 'Todas';
-    opcionTodas.innerText = 'Todas';
-    selectGestion.append(opcionTodas);
-
-    // Array vacío para ir guardando las gestiones que vayamos encontrando
-    const gestionesEncontradas = [];
-
-    // Recorremos todos los documentos que vinieron del servidor
-    documentos.forEach(doc => {
-        // Si el documento tiene gestión, y TODAVÍA no la hemos guardado en nuestro array
-        if (doc.gestion && !gestionesEncontradas.includes(doc.gestion)) {
-            gestionesEncontradas.push(doc.gestion); // La agregamos
+    const crearFiltro = (textoLabel, tipoInput, placeholder = '') => {
+        const grupo = document.createElement('div');
+        grupo.className = 'buscador-grupo';
+        
+        const label = document.createElement('label');
+        label.className = 'form-label'; 
+        label.innerText = textoLabel;
+        
+        let input;
+        if (tipoInput === 'select') {
+            input = document.createElement('select');
+        } else {
+            input = document.createElement('input');
+            input.type = tipoInput;
+            input.placeholder = placeholder;
         }
+        input.className = 'form-input'; 
+        
+        grupo.append(label, input);
+        return { grupo, input };
+    };
+
+    const filtroTexto = crearFiltro('Búsqueda (Título/Etiquetas)', 'text', 'Buscar...');
+    
+    const filtroCategoria = crearFiltro('Filtrar por Categoría', 'select');
+    const categoriasUnicas = ['Todas', ...new Set(todosLosDocumentos.map(doc => doc.categoria))];
+    categoriasUnicas.forEach(cat => {
+        const opcion = document.createElement('option');
+        opcion.value = cat; opcion.innerText = cat;
+        filtroCategoria.input.append(opcion);
     });
 
-    // Ordenamos el array para que quede bonito (Ej: 1-2025, 2-2025, 1-2026...)
-    // El .reverse() es para poner los más nuevos arriba
-    gestionesEncontradas.sort().reverse(); 
-
-    // Finalmente, convertimos ese array en etiquetas <option>
-    gestionesEncontradas.forEach(g => {
-        const op = document.createElement('option');
-        op.value = g;
-        op.innerText = g;
-        selectGestion.append(op);
+    const filtroGestion = crearFiltro('Filtrar por Gestión', 'select');
+    const gestionesUnicas = ['Todas', ...new Set(todosLosDocumentos.map(doc => doc.gestion).filter(g => g))];
+    gestionesUnicas.forEach(ges => {
+        const opcion = document.createElement('option');
+        opcion.value = ges; opcion.innerText = ges;
+        filtroGestion.input.append(opcion);
     });
 
-    // 4. Filtro por Rango de Fechas
+    // Rango de fechas (Ahora se apilarán gracias al CSS)
+    const grupoFechas = document.createElement('div');
+    grupoFechas.className = 'buscador-grupo';
+    
     const labelFechas = document.createElement('label');
-    labelFechas.innerText = 'Filtro por Rango de Fechas';
+    labelFechas.className = 'form-label';
+    labelFechas.innerText = 'Rango de Fechas';
     
     const cajaFechas = document.createElement('div');
-    cajaFechas.style.display = 'flex';
-    cajaFechas.style.gap = '10px';
-    cajaFechas.style.marginBottom = '15px';
+    cajaFechas.className = 'buscador-rango-fechas';
+    
+    const fechaInicio = document.createElement('input');
+    fechaInicio.type = 'date'; 
+    fechaInicio.className = 'form-input';
+    
+    const fechaFin = document.createElement('input');
+    fechaFin.type = 'date'; 
+    fechaFin.className = 'form-input';
+    
+    cajaFechas.append(fechaInicio, fechaFin);
+    grupoFechas.append(labelFechas, cajaFechas);
 
-    const inputDesde = document.createElement('input');
-    inputDesde.type = 'date';
-    inputDesde.className = 'buscador-input';
-    inputDesde.style.marginBottom = '0';
+    panelFiltros.append(tituloFiltros, filtroTexto.grupo, filtroCategoria.grupo, filtroGestion.grupo, grupoFechas);
 
-    const inputHasta = document.createElement('input');
-    inputHasta.type = 'date';
-    inputHasta.className = 'buscador-input';
-    inputHasta.style.marginBottom = '0';
-
-    cajaFechas.append(inputDesde, inputHasta);
-
-    // Agregamos todo al panel izquierdo
-    panelFiltros.append(
-        tituloFiltros, 
-        labelBusqueda, inputBusqueda, 
-        labelCategoria, selectCategoria, 
-        labelGestion, selectGestion, 
-        labelFechas, cajaFechas
-    );
-
-    // ======== LADO DERECHO: RESULTADOS ========
+    // ======== PANEL DERECHO: RESULTADOS ========
     const panelResultados = document.createElement('div');
     panelResultados.className = 'buscador-panel-resultados';
 
-    const renderizarTarjetas = (listaDeDatos) => {
-        panelResultados.innerHTML = ''; 
-        if (listaDeDatos.length === 0) {
-            panelResultados.innerHTML = '<p class="buscador-vacio">No se encontraron documentos.</p>';
+    const tituloResultados = document.createElement('h2');
+    tituloResultados.className = 'buscador-titulo-resultados';
+    tituloResultados.innerText = 'Documentos Respaldados';
+
+    const rejilla = document.createElement('div');
+    rejilla.className = 'buscador-rejilla';
+
+    const renderizarTarjetas = (documentosFiltrados) => {
+        rejilla.innerHTML = ''; 
+        if (documentosFiltrados.length === 0) {
+            const msj = document.createElement('div');
+            msj.className = 'buscador-vacio';
+            msj.innerText = 'No se encontraron documentos con esos filtros 🕵️‍♂️';
+            rejilla.append(msj);
             return;
         }
-        listaDeDatos.forEach(doc => {
-            panelResultados.append(TarjetaDocumento(doc));
+
+        documentosFiltrados.forEach(doc => {
+            rejilla.append(TarjetaDocumento(doc));
         });
     };
 
-    // ======== MOTOR DE BÚSQUEDA AVANZADO ========
+    // LÓGICA DE FILTRADO
     const aplicarFiltros = () => {
-        const fTexto = inputBusqueda.value.toLowerCase();
-        const fCat = selectCategoria.value;
-        const fGest = selectGestion.value;
-        const fDesde = inputDesde.value;
-        const fHasta = inputHasta.value;
+        const texto = filtroTexto.input.value.toLowerCase();
+        const cat = filtroCategoria.input.value;
+        const ges = filtroGestion.input.value;
+        const fInicio = fechaInicio.value;
+        const fFin = fechaFin.value;
 
-        const filtrados = documentos.filter(doc => {
-            // 1. Filtro Categoría
-            const pasaCat = fCat === 'Todas' || doc.categoria === fCat;
-            
-            // 2. Filtro Gestión
-            const pasaGest = fGest === 'Todas' || doc.gestion === fGest;
+        const filtrados = todosLosDocumentos.filter(doc => {
+            const cumpleTexto = doc.titulo.toLowerCase().includes(texto) || (doc.etiquetas && doc.etiquetas.join(' ').toLowerCase().includes(texto));
+            const cumpleCat = cat === 'Todas' || doc.categoria === cat;
+            const cumpleGes = ges === 'Todas' || doc.gestion === ges;
+            const cumpleInicio = fInicio === '' || doc.fecha >= fInicio;
+            const cumpleFin = fFin === '' || doc.fecha <= fFin;
 
-            // 3. Filtro Texto (Solo Título y Etiquetas como pediste)
-            const titulo = doc.titulo ? doc.titulo.toLowerCase() : '';
-            const pasaTexto = fTexto === '' || 
-                              titulo.includes(fTexto) ||
-                              (doc.etiquetas && doc.etiquetas.some(tag => tag.toLowerCase().includes(fTexto)));
-
-            // 4. Filtro Fechas (Matemática simple comparando los strings YYYY-MM-DD)
-            let pasaFechas = true;
-            if (fDesde !== '' && doc.fecha < fDesde) pasaFechas = false;
-            if (fHasta !== '' && doc.fecha > fHasta) pasaFechas = false;
-
-            // Retorna true solo si cumple TODOS los filtros a la vez
-            return pasaCat && pasaGest && pasaTexto && pasaFechas;
+            return cumpleTexto && cumpleCat && cumpleGes && cumpleInicio && cumpleFin;
         });
 
         renderizarTarjetas(filtrados);
     };
 
-    // Escuchamos los cambios en TODOS los filtros
-    inputBusqueda.addEventListener('keyup', aplicarFiltros);
-    selectCategoria.addEventListener('change', aplicarFiltros);
-    selectGestion.addEventListener('change', aplicarFiltros);
-    inputDesde.addEventListener('change', aplicarFiltros);
-    inputHasta.addEventListener('change', aplicarFiltros);
+    filtroTexto.input.addEventListener('input', aplicarFiltros);
+    filtroCategoria.input.addEventListener('change', aplicarFiltros);
+    filtroGestion.input.addEventListener('change', aplicarFiltros);
+    fechaInicio.addEventListener('change', aplicarFiltros);
+    fechaFin.addEventListener('change', aplicarFiltros);
 
-    // Carga inicial
-    renderizarTarjetas(documentos);
+    renderizarTarjetas(todosLosDocumentos);
+    panelResultados.append(tituloResultados, rejilla);
 
     contenedorPrincipal.append(panelFiltros, panelResultados);
     return contenedorPrincipal;

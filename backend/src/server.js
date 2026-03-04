@@ -5,10 +5,6 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 
-// 1. IMPORTAMOS PRISMA
-const { PrismaClient } = require('./generated/prisma');
-const prisma = new PrismaClient();
-
 const app = express();
 const PORT = 3001;
 
@@ -16,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// ======== CONFIGURACIÓN DE MULTER (Se queda igual) ========
+// Configuración de Multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadsPath = path.join(__dirname, '../uploads');
@@ -32,134 +28,129 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// ======== RUTAS CON PRISMA ========
+// Asegurar que exista la carpeta data y el archivo JSON
+const dbPath = path.join(__dirname, 'data', 'documentos.json');
+if (!fs.existsSync(path.dirname(dbPath))) {
+    fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+}
+if (!fs.existsSync(dbPath) || fs.readFileSync(dbPath, 'utf8').trim() === '') {
+    fs.writeFileSync(dbPath, JSON.stringify([], null, 2));
+}
 
-// 1. OBTENER TODOS LOS DOCUMENTOS (GET)
-app.get('/api/documentos', async (req, res) => {
+// ======== RUTAS ========
+
+app.get('/api/documentos', (req, res) => {
     try {
-        // Prisma busca todos los documentos E INCLUYE sus archivos adjuntos
-        const documentos = await prisma.documento.findMany({
-            include: { archivos: true },
-            orderBy: { fechaSubida: 'desc' } // Los más nuevos primero
-        });
-
-        // Le damos el formato exacto que tu Frontend ya conoce
-        const docsFormateados = documentos.map(doc => ({
-            ...doc,
-            archivosAdjuntos: doc.archivos // Renombramos para que el frontend no se rompa
-        }));
+        let documentos = [];
+        const data = fs.readFileSync(dbPath, 'utf8');
         
-        res.json(docsFormateados);
+        if (data.trim() !== '') {
+            documentos = JSON.parse(data);
+        }
+        
+        res.json(documentos);
     } catch (error) {
-        console.error('Error al leer de BD:', error);
-        res.status(500).json({ error: 'Error al leer documentos' });
+        console.error('Error al leer:', error);
+        res.status(500).json({ error: 'Error al leer documentos', detalles: error.message });
     }
 });
 
-// 2. CREAR UN DOCUMENTO (POST)
-app.post('/api/documentos', async (req, res) => {
+app.post('/api/documentos', (req, res) => {
     try {
-        const data = req.body;
+        const nuevoDocumento = req.body;
         
-        // Prisma crea el documento y sus archivos al mismo tiempo (Nested Writes)
-        const nuevoDoc = await prisma.documento.create({
-            data: {
-                titulo: data.titulo,
-                descripcion: data.descripcion,
-                fecha: data.fecha,
-                gestion: data.gestion,
-                categoria: data.categoria,
-                enlaceVideo: data.enlaceVideo,
-                etiquetas: data.etiquetas,
-                detalles: data.detalles, // Postgres guarda esto como un JSON nativo
-                archivos: {
-                    create: data.archivosAdjuntos.map(archivo => ({
-                        ruta: archivo.ruta,
-                        nombreOriginal: archivo.nombreOriginal,
-                        pesoBytes: archivo.pesoBytes,
-                        tipo: archivo.tipo
-                    }))
-                }
-            }
-        });
+        let documentos = [];
+        const data = fs.readFileSync(dbPath, 'utf8');
         
-        console.log(`✅ Nuevo registro guardado: ${nuevoDoc.titulo}`);
-        res.status(201).json({ mensaje: 'Guardado con éxito', data: nuevoDoc });
+        if (data.trim() !== '') {
+            documentos = JSON.parse(data);
+        }
+        
+        documentos.push(nuevoDocumento);
+        fs.writeFileSync(dbPath, JSON.stringify(documentos, null, 2));
+        
+        console.log(`Nuevo registro guardado: ${nuevoDocumento.titulo}`);
+        res.status(201).json({ mensaje: 'Guardado con éxito', data: nuevoDocumento });
+        
     } catch (error) {
-        console.error('Error al guardar en BD:', error);
-        res.status(500).json({ error: 'Error al guardar el documento' });
+        console.error('Error al guardar:', error);
+        res.status(500).json({ error: 'Error al guardar el documento', detalles: error.message });
     }
 });
 
-// 3. EDITAR UN DOCUMENTO (PUT)
-app.put('/documentos/:id', async (req, res) => {
+// RUTA PARA SUBIR ARCHIVOS
+app.post('/api/upload', upload.single('archivoFisico'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No se subió ningún archivo' });
+        }
+        console.log(`Archivo subido: ${req.file.filename}`);
+        res.json({ url: `/uploads/${req.file.filename}` });
+    } catch (error) {
+        console.error('Error al subir archivo:', error);
+        res.status(500).json({ error: 'Error al subir archivo', detalles: error.message });
+    }
+});
+
+// ======== RUTA PARA EDITAR (PUT) ========
+app.put('/documentos/:id', (req, res) => {
     try {
         const idAEditar = req.params.id;
-        const data = req.body;
+        const datosNuevos = req.body;
 
-        // Primero borramos los archivos viejos de la BD para meter la lista nueva y limpia
-        await prisma.archivoAdjunto.deleteMany({
-            where: { documentoId: idAEditar }
-        });
+        // 1. Leer la base de datos usando tu dbPath
+        const rawData = fs.readFileSync(dbPath, 'utf8');
+        let bd = [];
+        if (rawData.trim() !== '') {
+            bd = JSON.parse(rawData);
+        }
 
-        // Actualizamos el documento con la nueva información
-        const docActualizado = await prisma.documento.update({
-            where: { id: idAEditar },
-            data: {
-                titulo: data.titulo,
-                descripcion: data.descripcion,
-                fecha: data.fecha,
-                gestion: data.gestion,
-                categoria: data.categoria,
-                enlaceVideo: data.enlaceVideo,
-                etiquetas: data.etiquetas,
-                detalles: data.detalles,
-                archivos: {
-                    create: data.archivosAdjuntos.map(archivo => ({
-                        ruta: archivo.ruta,
-                        nombreOriginal: archivo.nombreOriginal,
-                        pesoBytes: archivo.pesoBytes,
-                        tipo: archivo.tipo
-                    }))
-                }
-            }
-        });
+        // 2. Encontrar el documento
+        const index = bd.findIndex(doc => doc.id == idAEditar); 
 
-        res.json({ mensaje: 'Documento actualizado con éxito', documento: docActualizado });
+        if (index !== -1) {
+            // 3. Reemplazar y guardar
+            bd[index] = datosNuevos;
+            fs.writeFileSync(dbPath, JSON.stringify(bd, null, 2));
+            res.json({ mensaje: 'Documento actualizado con éxito', documento: datosNuevos });
+        } else {
+            res.status(404).json({ error: 'Documento no encontrado en la base de datos' });
+        }
     } catch (error) {
-        console.error('Error al editar en BD:', error);
-        res.status(500).json({ error: 'Error interno al editar' });
+        console.error('Error al editar:', error);
+        res.status(500).json({ error: 'Error interno del servidor al editar', detalles: error.message });
     }
 });
 
-// 4. ELIMINAR UN DOCUMENTO (DELETE)
-app.delete('/documentos/:id', async (req, res) => {
+// ======== RUTA PARA ELIMINAR (DELETE) ========
+app.delete('/documentos/:id', (req, res) => {
     try {
         const idAEliminar = req.params.id;
 
-        // Gracias al "onDelete: Cascade" de nuestro schema, 
-        // al borrar el documento, Postgres borra sus archivos automáticamente.
-        await prisma.documento.delete({
-            where: { id: idAEliminar }
-        });
+        // 1. Leer la base de datos usando tu dbPath
+        const rawData = fs.readFileSync(dbPath, 'utf8');
+        let bd = [];
+        if (rawData.trim() !== '') {
+            bd = JSON.parse(rawData);
+        }
 
-        res.json({ mensaje: 'Documento eliminado para siempre' });
-    } catch (error) {
-        console.error('Error al eliminar en BD:', error);
-        res.status(500).json({ error: 'Error interno al eliminar' });
-    }
-});
+        // 2. Encontrar el documento
+        const index = bd.findIndex(doc => doc.id == idAEliminar);
 
-// SUBIR ARCHIVOS FÍSICOS (Se queda igual porque guarda en la carpeta /uploads)
-app.post('/api/upload', upload.single('archivoFisico'), (req, res) => {
-    try {
-        if (!req.file) return res.status(400).json({ error: 'No se subió ningún archivo' });
-        res.json({ url: `/uploads/${req.file.filename}` });
+        if (index !== -1) {
+            // 3. Eliminar y guardar
+            bd.splice(index, 1);
+            fs.writeFileSync(dbPath, JSON.stringify(bd, null, 2));
+            res.json({ mensaje: 'Documento eliminado para siempre' });
+        } else {
+            res.status(404).json({ error: 'Documento no encontrado' });
+        }
     } catch (error) {
-        res.status(500).json({ error: 'Error al subir archivo' });
+        console.error('Error al eliminar:', error);
+        res.status(500).json({ error: 'Error interno del servidor al eliminar', detalles: error.message });
     }
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor Backend conectado a PostgreSQL corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor Backend corriendo en http://localhost:${PORT}`);
 });

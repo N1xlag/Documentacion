@@ -40,7 +40,7 @@ export const Header = (onNavigate) => {
 
     // Botón Inicio
     const btnInicio = document.createElement('button');
-    btnInicio.innerText = '🏠 INICIO';
+    btnInicio.innerText = 'INICIO';
     btnInicio.style.padding = '10px 20px';
     btnInicio.style.fontWeight = 'bold';
     btnInicio.style.background = 'rgba(255, 255, 255, 0.2)';
@@ -67,7 +67,7 @@ export const Header = (onNavigate) => {
     const btnAdmin = document.createElement('button');
     const esAdmin = sessionStorage.getItem('isAdmin') === 'true'; 
     
-    btnAdmin.innerText = esAdmin ? '🔓 SALIR' : '🔒 ADMIN';
+    btnAdmin.innerText = esAdmin ? 'SALIR' : 'ADMIN';
     btnAdmin.style.padding = '10px 20px';
     btnAdmin.style.fontWeight = 'bold';
     btnAdmin.style.background = esAdmin ? '#bf2422' : 'transparent'; 

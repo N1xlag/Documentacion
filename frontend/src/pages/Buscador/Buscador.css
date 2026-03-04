@@ -1,54 +1,85 @@
+/* ======== ESTRUCTURA PRINCIPAL ======== */
 .buscador-contenedor {
     display: flex;
-    gap: 20px;
-    margin-top: 20px;
-    height: 85vh; /* Para que ocupe casi toda la pantalla y podamos scrollear */
+    gap: 40px; /* Mucho espacio para que no se choquen */
+    padding: 30px;
+    max-width: 1500px;
+    margin: 0 auto;
+    align-items: flex-start; /* Clave para que el sticky funcione */
 }
 
+/* ======== PANEL DE FILTROS (IZQUIERDA) ======== */
 .buscador-panel-filtros {
-    flex: 1;
-    background-color: var(--bg-secundario);
-    padding: 20px;
-    border-radius: var(--border-radius);
-    min-width: 250px;
-    max-width: 300px; /* Para que el menú izquierdo no se vuelva gigante */
-    height: fit-content; 
+    background-color: var(--bg-principal, #ffffff);
+    border-radius: var(--border-radius-lg);
+    padding: 35px;
+    box-shadow: var(--shadow-xl);
+    width: 320px; /* Ancho fijo y gordito */
+    flex-shrink: 0; /* ¡MAGIA! Evita que las tarjetas aplasten este panel */
+    position: sticky;
+    top: 30px; /* Se queda flotando al bajar */
+    box-sizing: border-box;
 }
 
-.buscador-panel-filtros label {
-    display: block;
-    font-weight: bold;
-    font-size: 13px;
-    margin-bottom: 5px;
-    color: var(--text-principal);
+.buscador-panel-filtros h3 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 22px;
+    color: var(--color-tercero, #bf2422); /* Rojo oscuro como en tu captura */
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
+    font-weight: 800;
+    letter-spacing: 1px;
 }
 
-.buscador-input {
-    width: 100%;
-    padding: 8px 10px;
-    margin-bottom: 15px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
-    font-size: 14px;
-    box-sizing: border-box; /* Evita que el padding rompa el ancho */
+.buscador-grupo {
+    margin-bottom: 25px;
 }
 
+/* Arreglamos el desborde de las fechas apilándolas */
+.buscador-rango-fechas {
+    display: flex;
+    flex-direction: column; /* Apila una fecha sobre otra */
+    gap: 15px;
+}
+
+/* ======== PANEL DE RESULTADOS (DERECHA) ======== */
 .buscador-panel-resultados {
-    flex: 3;
-    display: grid;
-    /* La magia de la grilla responsiva */
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    align-content: start;
-    overflow-y: auto; /* Scroll individual para los resultados */
-    padding-right: 10px;
+    flex: 1; /* Ocupa todo el resto de la pantalla */
+    min-width: 0; /* Evita que la grilla rompa el diseño */
 }
 
+.buscador-titulo-resultados {
+    /* Si tu fondo es blanco, pon --text-principal. Si es azul oscuro, pon --text-claro */
+    color: var(--text-principal, #2c3e50); 
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-size: 32px;
+    letter-spacing: 1px;
+    font-weight: 800;
+    border-bottom: 3px solid var(--color-primario);
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* La grilla donde van las tarjetas */
+.buscador-rejilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); /* Tarjetas bien anchas */
+    gap: 30px;
+}
+
+/* Mensaje cuando no hay resultados */
 .buscador-vacio {
-    color: var(--text-secundario);
-    font-style: italic;
-    grid-column: 1 / -1; 
     text-align: center;
+    color: var(--text-secundario);
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 50px;
+    background-color: var(--bg-principal);
     padding: 40px;
-    font-size: 18px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-base);
+    grid-column: 1 / -1; /* Centra el mensaje en toda la grilla */
 }
