@@ -1,0 +1,36 @@
+.admin-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: rgba(34, 66, 81, 0.9); /* Fondo azul oscuro */
+    display: flex; justify-content: center; align-items: center;
+    z-index: 3000;
+}
+
+.admin-caja {
+    background-color: white;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    text-align: center;
+    min-width: 300px;
+}
+
+.admin-input {
+    width: 100%; padding: 10px; font-size: 16px;
+    border: 2px solid #ccc; border-radius: 4px;
+    text-align: center; letter-spacing: 2px;
+}
+
+.admin-error {
+    color: red; font-size: 13px; font-weight: bold; min-height: 20px; margin: 10px 0;
+}
+
+.admin-caja-botones {
+    display: flex; gap: 10px; justify-content: center;
+}
+
+.admin-btn {
+    padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;
+}
+
+.admin-btn-cancelar { background-color: #ccc; color: black; }
+.admin-btn-ingresar { background-color: #f1a044; color: white; }

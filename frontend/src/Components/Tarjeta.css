@@ -1,0 +1,88 @@
+.tarjeta-doc {
+    background-color: var(--bg-principal);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta-doc:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.tarjeta-badge {
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.tarjeta-titulo {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    color: var(--text-principal);
+}
+
+.tarjeta-subtitulo {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-secundario);
+}
+
+.tarjeta-cuerpo {
+    font-size: 14px;
+    color: var(--text-principal);
+    background-color: var(--bg-secundario);
+    padding: 10px;
+    border-radius: var(--border-radius-sm);
+}
+
+.tarjeta-cuerpo p {
+    margin: 4px 0;
+}
+
+.tarjeta-pie {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; /* Empuja el pie hacia abajo si la tarjeta es muy alta */
+}
+
+.tarjeta-etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.tarjeta-etiquetas span {
+    background-color: var(--color-gris-200);
+    color: var(--text-secundario);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.tarjeta-btn-detalles {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--color-gris-600);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.tarjeta-btn-detalles:hover {
+    background-color: var(--color-gris-800);
+}

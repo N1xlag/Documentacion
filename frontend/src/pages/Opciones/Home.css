@@ -1,0 +1,36 @@
+.home-contenedor {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center;     /* Centra verticalmente */
+    height: 80vh;            /* Ocupa casi toda la pantalla */
+}
+
+.home-grupo-botones {
+    display: flex;
+    gap: 30px; /* Espacio entre los botones */
+}
+
+.home-btn {
+    padding: 30px 40px;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-secundario) 100%);
+    color: var(--text-claro);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-xl);
+    width: 250px; /* Ancho fijo para que se vean parejos */
+}
+
+/* Efecto al pasar el mouse por encima */
+.home-btn:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 16px 32px rgba(241, 160, 68, 0.4);
+}
+
+.home-btn:active {
+    transform: translateY(-2px);
+}

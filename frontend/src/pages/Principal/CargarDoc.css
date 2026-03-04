@@ -6,6 +6,9 @@
     padding: 30px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
+    /* Agregamos max-height para que no se salga de la pantalla si hay muchos campos */
+    max-height: 80vh; 
+    overflow-y: auto; 
 }
 
 .cargar-lado-izq {
@@ -17,6 +20,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    height: fit-content; /* Para que no se estire de más */
 }
 
 .cargar-input-archivo {
@@ -56,4 +60,35 @@
     width: 100%;
     font-size: 16px;
     padding: 15px;
+}
+
+.cargar-lista-archivos-visual {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left; /* Alineamos a la izquierda para que se lea mejor */
+}
+
+.cargar-item-archivo {
+    background-color: var(--bg-principal);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: var(--border-radius-sm);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cargar-btn-eliminar-archivo {
+    cursor: pointer;
+    background-color: #ffeaea;
+    border-radius: 4px;
+    padding: 2px 6px;
+    transition: background-color 0.2s;
+}
+
+.cargar-btn-eliminar-archivo:hover {
+    background-color: #ffcccc;
 }

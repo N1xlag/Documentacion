@@ -1,0 +1,44 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Le decimos que usaremos Postgres
+  url      = env("DATABASE_URL")
+}
+
+// ======== TABLA PRINCIPAL ========
+model Documento {
+  id           String   @id @default(uuid()) // Genera un ID alfanumérico seguro automáticamente
+  titulo       String
+  descripcion  String?  // El signo de interrogación significa que es opcional
+  fecha        String
+  gestion      String
+  categoria    String
+  enlaceVideo  String?
+  etiquetas    String[] // Postgres permite guardar listas directamente
+  
+  // ¡LA MAGIA!: Aquí guardaremos los campos dinámicos (Ciclo, Asistentes, etc.)
+  detalles     Json?    
+
+  fechaSubida  DateTime @default(now())
+
+  // Relación: Un documento puede tener muchos archivos
+  archivos     ArchivoAdjunto[]
+}
+
+// ======== TABLA SECUNDARIA (1 a Muchos) ========
+model ArchivoAdjunto {
+  id             String    @id @default(uuid())
+  ruta           String
+  nombreOriginal String
+  pesoBytes      Int
+  tipo           String    // 'pdf' o 'imagen'
+
+  // Clave foránea que conecta este archivo con su documento "padre"
+  documentoId    String
+  documento      Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+  // "onDelete: Cascade" significa que si borras el documento, se borran sus archivos
+}

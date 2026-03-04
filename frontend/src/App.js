@@ -1,36 +1,43 @@
-// src/App.js
-
-import { Header } from './Components/Header.js';
-import { CargarDoc } from './pages/Principal/CargarDoc.js';
+import { Header } from './components/Header.js';
+import { Home } from './pages/Opciones/Home.js'; 
+import { CargarDoc } from './pages/Principal/CargarDoc.js'; 
+import { EditarDoc } from './pages/Principal/EditarDoc.js';
 import { Buscador } from './pages/Buscador/Buscador.js';
 
 export const App = () => {
     const contenedorApp = document.createElement('div');
-
-    // Aquí es donde se dibujarán las páginas
     const vistaActual = document.createElement('div');
 
-    // El motor de navegación
-    const navegarA = async (pagina) => {
-        vistaActual.innerHTML = ''; // Limpiamos la pantalla
+    // Ahora navegarA puede recibir la página Y datos extra (como el documento a editar)
+    const navegarA = async (pagina, datosExtra = null) => {
+        vistaActual.innerHTML = ''; 
         
-        if (pagina === 'subir') {
-            // Llamamos a la nueva función CargarDoc
+        if (pagina === 'home') {
+            vistaActual.append(Home(navegarA)); 
+        } 
+        else if (pagina === 'documentar') {
             vistaActual.append(CargarDoc()); 
-        } else if (pagina === 'buscar') {
+        } 
+        else if (pagina === 'respaldos') {
+            vistaActual.innerHTML = '<h3 style="color: white; text-align: center; margin-top: 50px;">Cargando La Biblioteca... ⏳</h3>';
             const pantallaBuscador = await Buscador();
+            vistaActual.innerHTML = ''; 
             vistaActual.append(pantallaBuscador);
+        }
+        else if (pagina === 'editar') {
+            // Le mandamos los datos del documento a nuestra nueva pantalla
+            vistaActual.append(EditarDoc(datosExtra, navegarA));
         }
     };
 
-    // Creamos el Header y le pasamos la función de navegación
     const headerComponent = Header(navegarA);
-
-    // Unimos todo
     contenedorApp.append(headerComponent, vistaActual);
+    
+    // El "Receptor del Walkie-Talkie"
+    window.addEventListener('cambiarRuta', (evento) => {
+        navegarA(evento.detail.ruta, evento.detail.datos);
+    });
 
-    // Arrancamos la app en la pantalla de "subir"
-    navegarA('subir');
-
+    navegarA('home');
     return contenedorApp;
 };

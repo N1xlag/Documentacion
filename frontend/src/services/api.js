@@ -48,5 +48,42 @@ export const api = {
             console.error('Error al subir archivo:', error);
             throw error;
         }
-    }
+    },
+
+    eliminarDocumento: async (id) => {
+        const respuesta = await fetch(`http://localhost:3001/documentos/${id}`, {
+            method: 'DELETE' // DELETE es el comando oficial para borrar
+        });
+        if (!respuesta.ok) throw new Error('Error al eliminar');
+    },
+
+    // NUEVO: Editar un registro
+    editarDocumento: async (id, datosNuevos) => {
+        const respuesta = await fetch(`http://localhost:3001/documentos/${id}`, {
+            method: 'PATCH', // PATCH significa "Solo actualiza la parte que te mando, deja el resto igual"
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(datosNuevos)
+        });
+        if (!respuesta.ok) throw new Error('Error al editar');
+    },
+
+    // NUEVA FUNCIÓN PARA EDITAR
+    editarDocumento: async (id, datosActualizados) => {
+        try {
+            // Usamos PUT para reemplazar la información del documento con ese ID
+            const respuesta = await fetch(`http://localhost:3001/documentos/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datosActualizados)
+            });
+            return await respuesta.json();
+        } catch (error) {
+            console.error('Error al editar:', error);
+            throw error;
+        }
+    },
 };
