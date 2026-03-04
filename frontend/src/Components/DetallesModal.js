@@ -13,7 +13,7 @@ export const mostrarDetallesModal = (doc) => {
 
     const btnCerrar = document.createElement('button');
     btnCerrar.className = 'detalles-btn-cerrar';
-    btnCerrar.innerText = '✕';
+    btnCerrar.innerText = ' X ';
     btnCerrar.addEventListener('click', () => overlay.remove());
 
     // ======== 1. ENCABEZADO ========

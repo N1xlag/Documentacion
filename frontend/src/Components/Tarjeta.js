@@ -54,7 +54,7 @@ export const TarjetaDocumento = (doc) => {
     let cantidadArchivos = (doc.archivosAdjuntos ? doc.archivosAdjuntos.length : 0) + (doc.enlaceVideo ? 1 : 0);
     const textoArchivos = document.createElement('div');
     textoArchivos.style.fontWeight = 'bold';
-    textoArchivos.innerText = cantidadArchivos === 1 ? '1 archivo' : `📎 ${cantidadArchivos} archivos`;
+    textoArchivos.innerText = cantidadArchivos === 1 ? '1 archivo' : `${cantidadArchivos} archivos`;
 
     pieInfo.append(primeraEtiqueta, textoArchivos);
 
