@@ -1,5 +1,7 @@
 import './Tarjeta.css';
 import { mostrarDetallesModal } from './DetallesModal.js';
+import { api } from '../services/api.js';
+import { mostrarPopup } from './Popup.js';
 
 export const TarjetaDocumento = (doc) => {
     const tarjeta = document.createElement('div');
@@ -84,11 +86,29 @@ export const TarjetaDocumento = (doc) => {
         btnEliminar.innerText = 'Eliminar';
         btnEliminar.style.flex = '1'; btnEliminar.style.padding = '8px'; btnEliminar.style.backgroundColor = '#bf2422'; btnEliminar.style.color = 'white'; btnEliminar.style.border = 'none'; btnEliminar.style.borderRadius = '4px'; btnEliminar.style.cursor = 'pointer';
         btnEliminar.addEventListener('click', async () => {
-            if (confirm(`¿Eliminar "${doc.titulo}" permanentemente?`)) {
+            if (confirm(`⚠️ ¿Estás totalmente seguro de eliminar "${doc.titulo}" permanentemente?`)) {
                 try {
+                    // Cambiamos el texto del botón mientras borra
+                    const textoOriginal = btnEliminar.innerText;
+                    btnEliminar.innerText = '⏳ Borrando...';
+                    btnEliminar.disabled = true;
+                    btnEliminar.style.opacity = '0.7';
+
                     await api.eliminarDocumento(doc.id);
+                    
+                    // Borramos la tarjeta visualmente y mostramos el popup verde
                     tarjeta.remove();
-                } catch (e) { alert('Error al eliminar'); }
+                    mostrarPopup('success', 'Documento y archivos eliminados del sistema');
+
+                } catch (e) { 
+                    console.error("Error al eliminar:", e);
+                    mostrarPopup('error', 'Error de conexión al intentar eliminar');
+                    
+                    // Si falla, devolvemos el botón a la normalidad
+                    btnEliminar.innerText = '🗑️ Eliminar';
+                    btnEliminar.disabled = false;
+                    btnEliminar.style.opacity = '1';
+                }
             }
         });
 

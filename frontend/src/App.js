@@ -19,7 +19,7 @@ export const App = () => {
             vistaActual.append(CargarDoc()); 
         } 
         else if (pagina === 'respaldos') {
-            vistaActual.innerHTML = '<h3 style="color: white; text-align: center; margin-top: 50px;">Cargando La Biblioteca... ⏳</h3>';
+            vistaActual.innerHTML = '<h3 style="color: var(--text-principal); text-align: center; margin-top: 50px;">Cargando La Biblioteca...</h3>';
             const pantallaBuscador = await Buscador();
             vistaActual.innerHTML = ''; 
             vistaActual.append(pantallaBuscador);

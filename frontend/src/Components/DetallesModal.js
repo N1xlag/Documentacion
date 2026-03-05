@@ -66,7 +66,6 @@ export const mostrarDetallesModal = (doc) => {
         return `(${(bytes / 1048576).toFixed(1)} MB)`; 
     };
 
-    // --- MAGIA 1: EL VISOR DE IMÁGENES ---
     const abrirVisor = (rutaImagen) => {
         const fondoOscuro = document.createElement('div');
         fondoOscuro.className = 'visor-pantalla-completa';
@@ -76,33 +75,25 @@ export const mostrarDetallesModal = (doc) => {
         imgGrande.className = 'visor-imagen';
 
         fondoOscuro.append(imgGrande);
-
-        // Si hacen clic en cualquier lado del fondo negro, se borra
-        fondoOscuro.addEventListener('click', () => {
-            fondoOscuro.remove();
-        });
-
+        fondoOscuro.addEventListener('click', () => fondoOscuro.remove());
         document.body.append(fondoOscuro);
     };
 
-    // --- MAGIA 2: FORZAR DESCARGA INSTANTÁNEA ---
-    // Traemos el archivo en "crudo", creamos un link invisible y le damos clic automático
     const forzarDescarga = async (ruta, nombreArchivo, botonHTML) => {
         const textoOriginal = botonHTML.innerText;
         botonHTML.innerText = 'Descargando...';
         
         try {
             const respuesta = await fetch(ruta);
-            const blob = await respuesta.blob(); // Convertimos a datos crudos (Blob)
+            const blob = await respuesta.blob(); 
             const urlTemporal = window.URL.createObjectURL(blob);
             
             const linkInvisible = document.createElement('a');
             linkInvisible.href = urlTemporal;
-            linkInvisible.download = nombreArchivo; // Este atributo obliga a descargar
+            linkInvisible.download = nombreArchivo; 
             document.body.appendChild(linkInvisible);
-            linkInvisible.click(); // Hacemos el clic por código
+            linkInvisible.click(); 
             
-            // Limpiamos la basura invisible
             linkInvisible.remove();
             window.URL.revokeObjectURL(urlTemporal);
         } catch (error) {
@@ -125,27 +116,25 @@ export const mostrarDetallesModal = (doc) => {
         galeria.className = 'detalles-galeria';
 
         listaImagenes.forEach(imgData => {
-            const rutaCompleta = `http://localhost:3001${imgData.ruta}`;
+            // CORRECCIÓN: Usamos window.location.hostname para que funcione en el celular
+            const rutaCompleta = `http://${window.location.hostname}:3001${imgData.ruta}`;
             
             const cajaImg = document.createElement('div');
             cajaImg.className = 'detalles-caja-img';
-            cajaImg.style.cursor = 'pointer'; // Manita de clic
+            cajaImg.style.cursor = 'pointer'; 
             cajaImg.title = 'Haz clic para ampliar la imagen';
             
             const img = document.createElement('img');
             img.src = rutaCompleta;
             
-            // Cuando le dan clic a la caja, abrimos el visor
             img.addEventListener('click', () => abrirVisor(rutaCompleta));
 
-            // Botón de descarga
             const btnDescarga = document.createElement('button');
             btnDescarga.className = 'detalles-btn-descarga-img';
             btnDescarga.innerText = `Descargar ${formatearPeso(imgData.pesoBytes)}`;
             
-            // Evento para forzar la descarga
             btnDescarga.addEventListener('click', (e) => {
-                e.stopPropagation(); // Evita que se abra el visor al darle a descargar
+                e.stopPropagation(); 
                 forzarDescarga(rutaCompleta, imgData.nombreOriginal, btnDescarga);
             });
 
@@ -174,7 +163,8 @@ export const mostrarDetallesModal = (doc) => {
             btnDescargaDoc.innerText = 'Descargar';
 
             btnDescargaDoc.addEventListener('click', () => {
-                const rutaCompleta = `http://localhost:3001${pdfData.ruta}`;
+                // CORRECCIÓN: Usamos window.location.hostname para que funcione en el celular
+                const rutaCompleta = `http://${window.location.hostname}:3001${imgData.ruta}`;
                 forzarDescarga(rutaCompleta, pdfData.nombreOriginal, btnDescargaDoc);
             });
 
@@ -184,8 +174,38 @@ export const mostrarDetallesModal = (doc) => {
         seccionArchivos.append(tituloDocs, listaDocs);
     }
 
+    // ======== 4. EL BOTÓN DEL VIDEO ========
+    if (doc.enlaceVideo && doc.enlaceVideo.trim() !== '') {
+        const tituloVideo = document.createElement('h3'); 
+        tituloVideo.innerText = 'Video';
+        
+        // Usamos tu caja gris, pero centramos el contenido
+        const filaVideo = document.createElement('div');
+        filaVideo.className = 'detalles-fila-doc'; 
+        filaVideo.style.justifyContent = 'center'; // Esto centra el botón
+        
+        // Creamos el botón directo
+        const btnAbrirVideo = document.createElement('a');
+        btnAbrirVideo.className = 'detalles-btn-descarga-doc'; 
+        btnAbrirVideo.innerText = 'Ver Video';
+        btnAbrirVideo.target = '_blank'; 
+        btnAbrirVideo.style.textDecoration = 'none';
+        // Lo hacemos un poco más ancho y vistoso
+        btnAbrirVideo.style.padding = '10px 40px';
+        btnAbrirVideo.style.fontSize = '15px';
+        btnAbrirVideo.style.letterSpacing = '1px';
+        
+        let urlFinal = doc.enlaceVideo;
+        if (!urlFinal.startsWith('http://') && !urlFinal.startsWith('https://')) {
+            urlFinal = 'https://' + urlFinal;
+        }
+        btnAbrirVideo.href = urlFinal;
+
+        filaVideo.append(btnAbrirVideo);
+        seccionArchivos.append(tituloVideo, filaVideo);
+    }
+
     cajaModal.append(btnCerrar, encabezado, bloqueContexto, seccionArchivos);
     overlay.append(cajaModal);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     document.body.append(overlay);
 };

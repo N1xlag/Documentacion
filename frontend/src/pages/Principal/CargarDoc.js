@@ -193,8 +193,11 @@ export const CargarDoc = () => {
             campoCategoria.input.value = 'Seleccione una...';
             contenedorDinamico.innerHTML = ''; contenedorDinamico.style.display = 'none';
         } catch (error) {
-            mostrarPopup('error', 'Error al guardar.');
+            mostrarPopup('error', 'Error de conexión. Cancelando subida...');
             console.error(error);
+            for (const archivo of listaArchivosSubidos) {
+                await api.eliminarArchivoFisico(archivo.ruta);
+            }
         } finally {
             btnGuardar.innerText = 'GUARDAR REGISTRO';
             btnGuardar.disabled = false;

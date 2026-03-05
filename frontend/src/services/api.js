@@ -1,89 +1,72 @@
-// src/services/api.js
-const API_URL = 'http://localhost:3001/api';
+// frontend/src/services/api.js
+
+// EL TRUCO MAESTRO: Detecta automáticamente la IP o el localhost
+// Si entras desde 192.168.1.50, se conectará a 192.168.1.50:3001
+const HOST = window.location.hostname;
+const API_URL = `http://${HOST}:3001/api`;
 
 export const api = {
-    obtenerDocumentos: async () => {
+    // Le pasamos los filtros a la URL para que el backend haga el trabajo sucio
+    obtenerDocumentos: async (filtros = {}) => {
         try {
-            const respuesta = await fetch(`${API_URL}/documentos`);
-            if (!respuesta.ok) throw new Error('Error al conectar con el servidor');
-            return await respuesta.json();
-        } catch (error) {
-            console.error('Error:', error);
-            return []; 
-        }
-    },
-
-    guardarDocumento: async (nuevoDocumento) => {
-        try {
-            const respuesta = await fetch(`${API_URL}/documentos`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(nuevoDocumento)
-            });
-            if (!respuesta.ok) throw new Error('Error al guardar');
-            return await respuesta.json();
-        } catch (error) {
-            console.error('Error:', error);
-            throw error; 
-        }
-    },
-
-    // ¡NUEVA FUNCIÓN PARA ARCHIVOS!
-    subirArchivoFisico: async (archivoFile) => {
-        // Creamos la "caja de encomienda"
-        const formData = new FormData();
-        formData.append('archivoFisico', archivoFile);
-
-        try {
-            const respuesta = await fetch(`${API_URL}/upload`, {
-                method: 'POST',
-                // OJO: Con FormData el navegador pone el Content-Type automáticamente, no lo ponemos manual
-                body: formData
-            });
-            if (!respuesta.ok) throw new Error('Error al subir el archivo');
+            const queryParams = new URLSearchParams(filtros).toString();
+            const respuesta = await fetch(`${API_URL}/documentos?${queryParams}`);
             
-            const resultado = await respuesta.json();
-            return resultado.url; // Nos devuelve "/uploads/nombre-del-archivo.pdf"
+            // AGREGAMOS ESTA LÍNEA PARA EVITAR EL ERROR DEL .MAP()
+            if (!respuesta.ok) throw new Error('El servidor falló al traer los datos'); 
+            
+            return await respuesta.json();
         } catch (error) {
-            console.error('Error al subir archivo:', error);
-            throw error;
+            console.error('Error al obtener documentos:', error);
+            throw error; // Esto hará que Buscador.js atrape el error
         }
+    },
+
+    guardarDocumento: async (documento) => {
+        const respuesta = await fetch(`${API_URL}/documentos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(documento)
+        });
+        if (!respuesta.ok) throw new Error('Falló al guardar en BD');
+        return await respuesta.json();
+    },
+
+    editarDocumento: async (id, datosActualizados) => {
+        const respuesta = await fetch(`${API_URL}/documentos/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datosActualizados)
+        });
+        if (!respuesta.ok) throw new Error('Falló al actualizar en BD');
+        return await respuesta.json();
     },
 
     eliminarDocumento: async (id) => {
-        const respuesta = await fetch(`http://localhost:3001/documentos/${id}`, {
-            method: 'DELETE' // DELETE es el comando oficial para borrar
-        });
-        if (!respuesta.ok) throw new Error('Error al eliminar');
+        const respuesta = await fetch(`${API_URL}/documentos/${id}`, { method: 'DELETE' });
+        if (!respuesta.ok) throw new Error('Falló al eliminar');
+        return await respuesta.json();
     },
 
-    // NUEVO: Editar un registro
-    editarDocumento: async (id, datosNuevos) => {
-        const respuesta = await fetch(`http://localhost:3001/documentos/${id}`, {
-            method: 'PATCH', // PATCH significa "Solo actualiza la parte que te mando, deja el resto igual"
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(datosNuevos)
+    subirArchivoFisico: async (archivo) => {
+        const formData = new FormData();
+        formData.append('archivoFisico', archivo);
+        
+        const respuesta = await fetch(`${API_URL}/upload`, {
+            method: 'POST',
+            body: formData
         });
-        if (!respuesta.ok) throw new Error('Error al editar');
+        if (!respuesta.ok) throw new Error('Falló al subir archivo físico');
+        const data = await respuesta.json();
+        return data.url; 
     },
 
-    // NUEVA FUNCIÓN PARA EDITAR
-    editarDocumento: async (id, datosActualizados) => {
-        try {
-            // Usamos PUT para reemplazar la información del documento con ese ID
-            const respuesta = await fetch(`http://localhost:3001/documentos/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datosActualizados)
-            });
-            return await respuesta.json();
-        } catch (error) {
-            console.error('Error al editar:', error);
-            throw error;
-        }
-    },
+    // NUEVO: Función para limpiar basura si ocurre un error
+    eliminarArchivoFisico: async (ruta) => {
+        await fetch(`${API_URL}/upload`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ruta })
+        });
+    }
 };
