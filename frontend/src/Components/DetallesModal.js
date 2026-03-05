@@ -164,7 +164,7 @@ export const mostrarDetallesModal = (doc) => {
 
             btnDescargaDoc.addEventListener('click', () => {
                 // CORRECCIÓN: Usamos window.location.hostname para que funcione en el celular
-                const rutaCompleta = `http://${window.location.hostname}:3001${imgData.ruta}`;
+                const rutaCompleta = `http://${window.location.hostname}:3001${pdfData.ruta}`;
                 forzarDescarga(rutaCompleta, pdfData.nombreOriginal, btnDescargaDoc);
             });
 

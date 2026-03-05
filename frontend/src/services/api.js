@@ -23,6 +23,9 @@ export const api = {
     },
 
     guardarDocumento: async (documento) => {
+        // Le pegamos el ID del admin que inició sesión
+        documento.usuarioId = sessionStorage.getItem('adminId'); 
+        
         const respuesta = await fetch(`${API_URL}/documentos`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -33,6 +36,8 @@ export const api = {
     },
 
     editarDocumento: async (id, datosActualizados) => {
+        datosActualizados.usuarioId = sessionStorage.getItem('adminId');
+        
         const respuesta = await fetch(`${API_URL}/documentos/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -42,9 +47,40 @@ export const api = {
         return await respuesta.json();
     },
 
+    // Para eliminar, ahora enviamos el ID en el "cuerpo" del mensaje
     eliminarDocumento: async (id) => {
-        const respuesta = await fetch(`${API_URL}/documentos/${id}`, { method: 'DELETE' });
-        if (!respuesta.ok) throw new Error('Falló al eliminar');
+        const respuesta = await fetch(`${API_URL}/documentos/${id}`, { 
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usuarioId: sessionStorage.getItem('adminId') })
+        });
+        
+        if (!respuesta.ok) {
+            const errorData = await respuesta.json();
+            throw new Error(errorData.error || 'Falló al eliminar');
+        }
+        return await respuesta.json();
+    },
+
+    obtenerPapelera: async () => {
+        const respuesta = await fetch(`${API_URL}/documentos/estado/papelera`);
+        if (!respuesta.ok) throw new Error('Falló al traer la papelera');
+        return await respuesta.json();
+    },
+
+    votarPapelera: async (id, decision) => {
+        const respuesta = await fetch(`${API_URL}/documentos/${id}/votar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                usuarioId: sessionStorage.getItem('adminId'),
+                decision: decision
+            })
+        });
+        if (!respuesta.ok) {
+            const errorData = await respuesta.json();
+            throw new Error(errorData.error);
+        }
         return await respuesta.json();
     },
 
@@ -68,5 +104,11 @@ export const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ruta })
         });
-    }
+    },
+
+    obtenerAuditoria: async (inicio, fin) => {
+        const respuesta = await fetch(`${API_URL}/documentos/estado/auditoria?inicio=${inicio}&fin=${fin}`);
+        if (!respuesta.ok) throw new Error('Falló al traer la auditoría');
+        return await respuesta.json();
+    },
 };

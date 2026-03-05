@@ -3,6 +3,8 @@ import { Home } from './pages/Opciones/Home.js';
 import { CargarDoc } from './pages/Principal/CargarDoc.js'; 
 import { EditarDoc } from './pages/Principal/EditarDoc.js';
 import { Buscador } from './pages/Buscador/Buscador.js';
+import { Papelera } from './pages/Papelera/Papelera.js';
+import { Auditoria } from './pages/Auditoria/Auditoria.js';
 
 export const App = () => {
     const contenedorApp = document.createElement('div');
@@ -27,6 +29,15 @@ export const App = () => {
         else if (pagina === 'editar') {
             // Le mandamos los datos del documento a nuestra nueva pantalla
             vistaActual.append(EditarDoc(datosExtra, navegarA));
+        }
+        else if (pagina === 'papelera') {
+         vistaActual.innerHTML = '<h3 style="text-align: center;">Abriendo Bóveda...</h3>';
+         const pantallaPapelera = await Papelera();
+         vistaActual.innerHTML = '';
+         vistaActual.append(pantallaPapelera);
+        }
+        else if (pagina === 'auditoria') {
+         vistaActual.append(Auditoria());
         }
     };
 

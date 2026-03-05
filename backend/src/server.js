@@ -4,6 +4,8 @@ const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
+const cron = require('node-cron');
+const docService = require('./services/documentosService'); // Importamos tu servicio
 
 // ======== SISTEMA DE LOGS ========
 const logFile = fs.createWriteStream(path.join(__dirname, '../errores.log'), { flags: 'a' });
@@ -69,6 +71,37 @@ app.delete('/api/upload', (req, res) => {
         if (err) console.error(`No se pudo borrar temporal: ${rutaFisica}`, err);
     });
     res.json({ mensaje: 'Archivo temporal eliminado' });
+});
+
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
+
+// ======== ROBOT DE BACKUPS AUTOMÁTICOS ========
+// 1. Asegurarnos de que exista una carpeta secreta llamada "backups_automaticos"
+const dirBackups = path.join(__dirname, '../backups_automaticos');
+if (!fs.existsSync(dirBackups)){
+    fs.mkdirSync(dirBackups);
+}
+
+// 2. Programar la alarma: '0 17 * * *' significa "Todos los días a las 17:00 (5 PM)"
+cron.schedule('* * * * *', async () => {
+    console.log('⏳ [5:00 PM] Iniciando Backup Automático del Sistema...');
+    try {
+        // Le pedimos al cerebro que junte todos los datos
+        const backup = await docService.generarBackupTotal();
+        
+        // Creamos un nombre con la fecha de hoy (Ej: Respaldo_2026-03-05.json)
+        const fechaHoy = new Date().toISOString().split('T')[0];
+        const nombreArchivo = `Respaldo_Seguridad_${fechaHoy}.json`;
+        const rutaCompleta = path.join(dirBackups, nombreArchivo);
+        
+        // Escribimos el archivo físicamente en el disco duro
+        fs.writeFileSync(rutaCompleta, JSON.stringify(backup, null, 2));
+        
+        console.log(`✅ Backup Automático guardado con éxito en: ${rutaCompleta}`);
+    } catch (error) {
+        console.error('❌ Falla crítica en el Backup Automático:', error);
+    }
 });
 
 app.listen(PORT, '0.0.0.0', () => { 

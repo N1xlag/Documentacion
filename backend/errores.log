@@ -1,2 +1,10 @@
 [2026-03-05T04:21:59.278Z] ERROR: Error al borrar: C:\Users\Administrator\Desktop\Documentacion\backend\uploads\1772683594981-406549791-Gemini_Generated_Image_htnsa6htnsa6htns.png Error: ENOENT: no such file or directory, unlink 'C:\Users\Administrator\Desktop\Documentacion\backend\uploads\1772683594981-406549791-Gemini_Generated_Image_htnsa6htnsa6htns.png'
 [2026-03-05T04:21:59.279Z] ERROR: Error al borrar: C:\Users\Administrator\Desktop\Documentacion\backend\uploads\1772683595039-923369443-Funcionamiento de Programa IO2 (2).pdf Error: ENOENT: no such file or directory, unlink 'C:\Users\Administrator\Desktop\Documentacion\backend\uploads\1772683595039-923369443-Funcionamiento de Programa IO2 (2).pdf'
+[2026-03-05T09:42:00.018Z] ERROR: ❌ Falla crítica en el Backup Automático: TypeError: docService.generarBackupTotal is not a function
+[2026-03-05T09:43:00.020Z] ERROR: ❌ Falla crítica en el Backup Automático: TypeError: docService.generarBackupTotal is not a function
+[2026-03-05T09:44:00.027Z] ERROR: ❌ Falla crítica en el Backup Automático: TypeError: docService.generarBackupTotal is not a function
+[2026-03-05T09:45:00.018Z] ERROR: ❌ Falla crítica en el Backup Automático: TypeError: docService.generarBackupTotal is not a function
+[2026-03-05T09:46:00.031Z] ERROR: ❌ Falla crítica en el Backup Automático: TypeError: docService.generarBackupTotal is not a function
+[2026-03-05T09:47:00.007Z] ERROR: ❌ Falla crítica en el Backup Automático: TypeError: docService.generarBackupTotal is not a function
+[2026-03-05T09:48:00.022Z] ERROR: ❌ Falla crítica en el Backup Automático: TypeError: docService.generarBackupTotal is not a function
+[2026-03-05T09:49:00.009Z] ERROR: ❌ Falla crítica en el Backup Automático: TypeError: docService.generarBackupTotal is not a function

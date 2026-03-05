@@ -1,0 +1,103 @@
+{
+  "fechaGeneracion": "2026-03-05T09:54:00.183Z",
+  "totalDocumentos": 2,
+  "datos": {
+    "usuarios": [
+      {
+        "id": "1",
+        "nombre": "Miguel",
+        "usuario": "inge",
+        "password": "1234",
+        "rol": "ADMIN"
+      },
+      {
+        "id": "2",
+        "nombre": "Nicolas",
+        "usuario": "nico",
+        "password": "admin",
+        "rol": "ADMIN"
+      }
+    ],
+    "documentos": [
+      {
+        "id": "f4ee6671-237d-4b5d-865b-7680ebfa0245",
+        "titulo": "qweqwe",
+        "descripcion": "qweqwe",
+        "fecha": "2026-03-05",
+        "gestion": "1-2026",
+        "categoria": "Propio",
+        "enlaceVideo": "",
+        "etiquetas": [
+          "qweqwe"
+        ],
+        "detalles": {
+          "Tipo": "Proyecto",
+          "Autor(es)": "qweqwe",
+          "Área o Materia Vinculada": "qweqwe"
+        },
+        "fechaSubida": "2026-03-05T08:26:57.976Z",
+        "estado": "PENDIENTE_BORRADO",
+        "archivos": [],
+        "votosBorrados": [
+          {
+            "id": "cb872f40-576d-415c-b55a-28a80d2082ac",
+            "fecha": "2026-03-05T08:32:44.273Z",
+            "usuarioId": "2",
+            "documentoId": "f4ee6671-237d-4b5d-865b-7680ebfa0245"
+          }
+        ]
+      },
+      {
+        "id": "faa8f6b6-db96-4a40-97de-d6ad86cad94f",
+        "titulo": "asdasdass",
+        "descripcion": "asd",
+        "fecha": "2026-03-05",
+        "gestion": "1-2026",
+        "categoria": "Otros",
+        "enlaceVideo": "",
+        "etiquetas": [
+          "asdasd"
+        ],
+        "detalles": {},
+        "fechaSubida": "2026-03-05T09:32:36.298Z",
+        "estado": "ACTIVO",
+        "archivos": [],
+        "votosBorrados": []
+      }
+    ],
+    "auditoria": [
+      {
+        "id": "34e42448-f88a-4aad-8cae-6745333756f1",
+        "accion": "SOLICITÓ BORRADO",
+        "fecha": "2026-03-05T08:32:44.270Z",
+        "hashSeguro": "7801a7269fa64768e0ae7d94ba3e6dbec47092e698347e525baf1efd376db55e",
+        "usuarioId": "2",
+        "documentoId": "f4ee6671-237d-4b5d-865b-7680ebfa0245"
+      },
+      {
+        "id": "dc4b3b41-6616-4288-8468-32967f7c689d",
+        "accion": "CREÓ DOCUMENTO",
+        "fecha": "2026-03-05T09:32:36.303Z",
+        "hashSeguro": "a742f85e4631e75d8a321661618aab15ffa5c217c7ab70e4d88c5cb0caed8757",
+        "usuarioId": "2",
+        "documentoId": "faa8f6b6-db96-4a40-97de-d6ad86cad94f"
+      },
+      {
+        "id": "adf88e69-c5ed-4271-914d-3989d379eb25",
+        "accion": "EDITÓ DOCUMENTO",
+        "fecha": "2026-03-05T09:41:55.168Z",
+        "hashSeguro": "61c0be2279650c3f8162232089895747dd8d8f6b1961b223d7367a75d14d1bed",
+        "usuarioId": "2",
+        "documentoId": "faa8f6b6-db96-4a40-97de-d6ad86cad94f"
+      },
+      {
+        "id": "1256fb82-6009-4716-8264-c8539338f5a0",
+        "accion": "EDITÓ DOCUMENTO",
+        "fecha": "2026-03-05T09:53:27.690Z",
+        "hashSeguro": "0989ae5d8aeea9fe18e65c4a451f251985dc21d0cf575e55e645cb96cf31cb1a",
+        "usuarioId": "2",
+        "documentoId": "faa8f6b6-db96-4a40-97de-d6ad86cad94f"
+      }
+    ]
+  }
+}

@@ -11,7 +11,7 @@ export const Header = (onNavigate) => {
     header.style.marginBottom = '20px';
     header.style.borderRadius = '8px'; 
 
-    // ======== CAJA IZQUIERDA: Logo y Título ========
+    // ======== CAJA IZQUIERDA ========
     const cajaIzquierda = document.createElement('div');
     cajaIzquierda.style.display = 'flex';
     cajaIzquierda.style.alignItems = 'center';
@@ -33,7 +33,7 @@ export const Header = (onNavigate) => {
 
     cajaIzquierda.append(logo, titulo);
 
-    // ======== CAJA DERECHA: Botones de Inicio y Admin ========
+    // ======== CAJA DERECHA ========
     const cajaDerecha = document.createElement('div');
     cajaDerecha.style.display = 'flex';
     cajaDerecha.style.gap = '15px';
@@ -50,23 +50,50 @@ export const Header = (onNavigate) => {
     btnInicio.style.cursor = 'pointer';
     btnInicio.style.transition = 'all 0.2s';
 
-    btnInicio.onmouseover = () => {
-        btnInicio.style.background = 'white';
-        btnInicio.style.color = 'var(--color-tercero)';
-    };
-    btnInicio.onmouseout = () => {
-        btnInicio.style.background = 'rgba(255, 255, 255, 0.2)';
-        btnInicio.style.color = 'white';
-    };
+    btnInicio.onmouseover = () => { btnInicio.style.background = 'white'; btnInicio.style.color = 'var(--color-tercero)'; };
+    btnInicio.onmouseout = () => { btnInicio.style.background = 'rgba(255, 255, 255, 0.2)'; btnInicio.style.color = 'white'; };
+    btnInicio.addEventListener('click', () => onNavigate('home'));
 
-    btnInicio.addEventListener('click', () => {
-        onNavigate('home');
-    });
-
-    // Botón Admin
-    const btnAdmin = document.createElement('button');
     const esAdmin = sessionStorage.getItem('isAdmin') === 'true'; 
-    
+
+    // === BOTONES EXCLUSIVOS PARA ADMINS ===
+    let btnPapelera = null;
+    let btnAuditoria = null;
+
+    if (esAdmin) {
+        // Botón Papelera
+        btnPapelera = document.createElement('button');
+        btnPapelera.innerText = '🗑️ PAPELERA';
+        btnPapelera.style.padding = '10px 20px';
+        btnPapelera.style.fontWeight = 'bold';
+        btnPapelera.style.background = '#fef2f2'; 
+        btnPapelera.style.color = '#b91c1c'; 
+        btnPapelera.style.border = '2px solid white';
+        btnPapelera.style.borderRadius = '4px';
+        btnPapelera.style.cursor = 'pointer';
+        btnPapelera.style.transition = 'all 0.2s';
+        btnPapelera.onmouseover = () => { btnPapelera.style.background = 'white'; btnPapelera.style.transform = 'scale(1.05)'; };
+        btnPapelera.onmouseout = () => { btnPapelera.style.background = '#fef2f2'; btnPapelera.style.transform = 'scale(1)'; };
+        btnPapelera.addEventListener('click', () => onNavigate('papelera'));
+
+        // Botón Auditoría (NUEVO)
+        btnAuditoria = document.createElement('button');
+        btnAuditoria.innerText = '🛡️ AUDITORÍA';
+        btnAuditoria.style.padding = '10px 20px';
+        btnAuditoria.style.fontWeight = 'bold';
+        btnAuditoria.style.background = '#f0fdf4'; // Verde clarito
+        btnAuditoria.style.color = '#166534'; // Verde oscuro
+        btnAuditoria.style.border = '2px solid white';
+        btnAuditoria.style.borderRadius = '4px';
+        btnAuditoria.style.cursor = 'pointer';
+        btnAuditoria.style.transition = 'all 0.2s';
+        btnAuditoria.onmouseover = () => { btnAuditoria.style.background = 'white'; btnAuditoria.style.transform = 'scale(1.05)'; };
+        btnAuditoria.onmouseout = () => { btnAuditoria.style.background = '#f0fdf4'; btnAuditoria.style.transform = 'scale(1)'; };
+        btnAuditoria.addEventListener('click', () => onNavigate('auditoria'));
+    }
+
+    // Botón Admin / Salir
+    const btnAdmin = document.createElement('button');
     btnAdmin.innerText = esAdmin ? 'SALIR' : 'ADMIN';
     btnAdmin.style.padding = '10px 20px';
     btnAdmin.style.fontWeight = 'bold';
@@ -77,15 +104,15 @@ export const Header = (onNavigate) => {
     btnAdmin.style.cursor = 'pointer';
 
     btnAdmin.addEventListener('click', () => {
-        mostrarLoginAdmin(() => {
-            window.location.reload(); // Recarga la página para aplicar el modo Dios
-        });
+        mostrarLoginAdmin(() => { window.location.reload(); });
     });
 
-    cajaDerecha.append(btnInicio, btnAdmin);
+    // Agregamos los botones en orden
+    cajaDerecha.append(btnInicio);
+    if (btnPapelera) cajaDerecha.append(btnPapelera); 
+    if (btnAuditoria) cajaDerecha.append(btnAuditoria);
+    cajaDerecha.append(btnAdmin);
     
-    // Unimos todo al Header
     header.append(cajaIzquierda, cajaDerecha);
-
     return header;
 };
