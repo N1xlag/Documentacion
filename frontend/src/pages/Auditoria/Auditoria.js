@@ -8,7 +8,7 @@ export const Auditoria = () => {
 
     contenedor.innerHTML = `
         <h2 style="color: var(--color-secundario); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
-            🛡️ Registro Oficial de Movimientos (Auditoría)
+             Registro Oficial de Movimientos (Auditoría)
         </h2>
         <p style="color: #64748b; margin-bottom: 20px;">
             Este registro está protegido por criptografía (Hash). Cualquier manipulación manual en la base de datos invalidará estas firmas, garantizando que las fechas y acciones mostradas son 100% reales e inalterables.
@@ -24,7 +24,7 @@ export const Auditoria = () => {
                 <input type="date" id="audit-fin" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
             </div>
             <button id="btn-buscar-audit" class="admin-btn" style="background: var(--color-primario); padding: 9px 20px; color: white; font-weight: bold; border-radius: 4px; cursor:pointer;">
-                🔍 Generar Reporte
+                 Generar Reporte
             </button>
         </div>
 

@@ -9,76 +9,78 @@ datasource db {
 // ======== 1. TABLAS ORIGINALES MEJORADAS ========
 
 model Documento {
-  id           String   @id @default(uuid())
-  titulo       String
-  descripcion  String?
-  fecha        String
-  gestion      String
-  categoria    String
-  enlaceVideo  String?
-  etiquetas    String[] 
-  detalles     Json?
-  fechaSubida  DateTime @default(now())
-  
-  // NUEVO: Cuando alguien quiera borrarlo, cambiará a "PENDIENTE_BORRADO" y se ocultará
-  estado       String   @default("ACTIVO") 
+  id          String   @id @default(uuid())
+  titulo      String
+  descripcion String?
+  fecha       String
+  gestion     String
+  categoria   String
+  enlaceVideo String?
+  etiquetas   String[]
+  detalles    Json?
+  fechaSubida DateTime @default(now())
 
-  archivos     ArchivoAdjunto[]
-  auditorias   Auditoria[]
+  // NUEVO: Cuando alguien quiera borrarlo, cambiará a "PENDIENTE_BORRADO" y se ocultará
+  estado String @default("ACTIVO")
+
+  archivos      ArchivoAdjunto[]
+  auditorias    Auditoria[]
   votosBorrados VotoEliminacion[]
 }
 
 model ArchivoAdjunto {
-  id             String    @id @default(uuid())
+  id             String @id @default(uuid())
   ruta           String
   nombreOriginal String
   pesoBytes      Int
-  tipo           String    
+  tipo           String
 
-  documentoId    String
-  documento      Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+  documentoId String
+  documento   Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
 }
 
 // ======== 2. NUEVAS TABLAS DE SEGURIDAD ========
 
 // Aquí guardaremos a los Admins
 model Usuario {
-  id        String   @id @default(uuid())
-  nombre    String   // Ej: "Ing. Carlos"
-  usuario   String   @unique // Ej: "carlos_admin"
-  password  String   // Su contraseña encriptada
-  rol       String   @default("ADMIN")
+  id       String  @id @default(uuid())
+  nombre   String
+  usuario  String  @unique
+  password String
+  rol      String  @default("ADMIN")
+  activo   Boolean @default(true)
 
-  auditorias Auditoria[]
-  votos      VotoEliminacion[]
+  // Relaciones corregidas con los nombres exactos de tu base de datos
+  auditoria       Auditoria[]
+  VotoEliminacion VotoEliminacion[]
 }
 
 // "El Notario" - Guarda el historial inborrable
 model Auditoria {
-  id           String   @id @default(uuid())
-  accion       String   // Ej: "CREÓ DOCUMENTO", "EDITÓ", "INTENTÓ BORRAR"
-  fecha        DateTime @default(now())
-  hashSeguro   String   // Un código matemático que demuestra que nadie manipuló este registro
-  
-  usuarioId    String
-  usuario      Usuario  @relation(fields: [usuarioId], references: [id])
-  
+  id         String   @id @default(uuid())
+  accion     String // Ej: "CREÓ DOCUMENTO", "EDITÓ", "INTENTÓ BORRAR"
+  fecha      DateTime @default(now())
+  hashSeguro String // Un código matemático que demuestra que nadie manipuló este registro
+
+  usuarioId String
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
   // Lo relacionamos al documento, pero si el documento se borra, el registro de auditoría SOBREVIVE
-  documentoId  String?  
-  documento    Documento? @relation(fields: [documentoId], references: [id], onDelete: SetNull)
+  documentoId String?
+  documento   Documento? @relation(fields: [documentoId], references: [id], onDelete: SetNull)
 }
 
 // "La Urna de Votación" - Registra los 3 votos necesarios
 model VotoEliminacion {
-  id           String   @id @default(uuid())
-  fecha        DateTime @default(now())
+  id    String   @id @default(uuid())
+  fecha DateTime @default(now())
 
-  usuarioId    String
-  usuario      Usuario  @relation(fields: [usuarioId], references: [id])
+  usuarioId String
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
 
-  documentoId  String
-  documento    Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
+  documentoId String
+  documento   Documento @relation(fields: [documentoId], references: [id], onDelete: Cascade)
 
   // Esta regla de oro evita que un mismo admin vote 2 veces por el mismo documento
-  @@unique([usuarioId, documentoId]) 
+  @@unique([usuarioId, documentoId])
 }

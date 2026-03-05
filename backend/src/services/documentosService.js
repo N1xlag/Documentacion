@@ -134,14 +134,18 @@ const eliminarDocumento = async (id, usuarioId) => {
     return { borradoReal: true, mensaje: "3 votos alcanzados. Documento destruido permanentemente." };
 };
 
-// ======== 6. PAPELERA DE RECICLAJE ========
+// ======== OBTENER PAPELERA (Con trazabilidad) ========
 const obtenerPapelera = async () => {
-    const documentos = await prisma.documento.findMany({
-        where: { estado: 'PENDIENTE_BORRADO' },
-        include: { archivos: true, votosBorrados: true }, // Traemos los votos para contarlos
-        orderBy: { fechaSubida: 'desc' }
+    return await prisma.documento.findMany({
+        where: { estado: 'PENDIENTE_BORRADO' }, // <--- ¡AQUÍ ESTABA EL ERROR!
+        include: {
+            archivos: true,
+            votosBorrados: {
+                include: { usuario: { select: { nombre: true } } },
+                orderBy: { fecha: 'asc' } 
+            }
+        }
     });
-    return documentos.map(doc => ({ ...doc, archivosAdjuntos: doc.archivos }));
 };
 
 const procesarVotoPapelera = async (id, usuarioId, decision) => {

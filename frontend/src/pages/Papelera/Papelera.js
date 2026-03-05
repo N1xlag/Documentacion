@@ -7,7 +7,7 @@ export const Papelera = async () => {
     contenedor.style.margin = '0 auto';
 
     const titulo = document.createElement('h2');
-    titulo.innerText = '🗑️ Papelera de Seguridad (Requiere 3 Votos)';
+    titulo.innerText = ' Papelera de Seguridad (Requiere 3 Votos)';
     titulo.style.color = '#b91c1c'; // Rojo oscuro
     titulo.style.borderBottom = '2px solid #fca5a5';
     titulo.style.paddingBottom = '10px';
@@ -34,16 +34,26 @@ export const Papelera = async () => {
                 tarjeta.style.justifyContent = 'space-between';
                 tarjeta.style.alignItems = 'center';
 
-                // Info del documento
-                const info = document.createElement('div');
-                const numVotos = doc.votosBorrados ? doc.votosBorrados.length : 1;
-                info.innerHTML = `
-                    <h3 style="margin: 0 0 5px 0; color: #7f1d1d;">${doc.titulo}</h3>
-                    <p style="margin: 0; font-size: 14px; color: #991b1b;">Categoría: ${doc.categoria} | Subido: ${doc.fecha}</p>
-                    <p style="margin: 8px 0 0 0; font-weight: bold; color: #dc2626; font-size: 15px;">
-                        ⚠️ Votos actuales para destruir: ${numVotos} / 3
-                    </p>
-                `;
+                let infoIniciador = '';
+                    if (doc.votosBorrados && doc.votosBorrados.length > 0) {
+                        const primerVoto = doc.votosBorrados[0];
+                        const fechaAmigable = new Date(primerVoto.fecha).toLocaleString();
+                        
+                        infoIniciador = `
+                            <div style="background: #fef2f2; border: 1px dashed #ef4444; color: #b91c1c; padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-top: 10px; margin-bottom: 10px; display: inline-block;">
+                                🛑 <b>Enviado a papelera por:</b> ${primerVoto.usuario?.nombre || 'Usuario Desconocido'} <br>
+                                🕒 <b>Fecha de envío:</b> ${fechaAmigable}
+                            </div>
+                        `;
+                    } else {
+                        // Respaldo para los documentos que borraste ANTES de esta actualización
+                        infoIniciador = `
+                            <div style="background: #f1f5f9; border: 1px dashed #94a3b8; color: #64748b; padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-top: 10px; margin-bottom: 10px; display: inline-block;">
+                                👻 <b>Enviado a papelera por:</b> Usuario del Sistema Antiguo <br>
+                                🕒 <b>Fecha de envío:</b> Desconocida
+                            </div>
+                        `;
+                    }
 
                 // Botones
                 const cajaBotones = document.createElement('div');

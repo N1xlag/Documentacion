@@ -111,4 +111,33 @@ export const api = {
         if (!respuesta.ok) throw new Error('Falló al traer la auditoría');
         return await respuesta.json();
     },
+
+    // ======== GESTIÓN DE PERSONAL ========
+    obtenerUsuarios: async () => {
+        const respuesta = await fetch(`http://${window.location.hostname}:3001/api/auth/usuarios`);
+        return await respuesta.json();
+    },
+
+    crearUsuario: async (datos) => {
+        datos.creadorId = sessionStorage.getItem('adminId'); // Etiquetamos quién da la orden
+        const respuesta = await fetch(`http://${window.location.hostname}:3001/api/auth/usuarios`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
+        const data = await respuesta.json();
+        if (!respuesta.ok) throw new Error(data.error);
+        return data;
+    },
+
+    eliminarUsuario: async (id) => {
+        // Pasamos el ID del Jefe en la URL por seguridad
+        const creadorId = sessionStorage.getItem('adminId');
+        const respuesta = await fetch(`http://${window.location.hostname}:3001/api/auth/usuarios/${id}?creadorId=${creadorId}`, { 
+            method: 'DELETE' 
+        });
+        const data = await respuesta.json();
+        if (!respuesta.ok) throw new Error(data.error);
+        return data;
+    }
 };

@@ -1,11 +1,12 @@
 import './AdminLoginModal.css';
 
 export const mostrarLoginAdmin = (alIniciarSesion) => {
-    // CERRAR SESIÓN: Si ya está logueado, borramos sus datos
+    // 1. CERRAR SESIÓN: Limpieza absoluta de la memoria
     if (sessionStorage.getItem('isAdmin') === 'true') {
         sessionStorage.removeItem('isAdmin');
         sessionStorage.removeItem('adminNombre');
         sessionStorage.removeItem('adminId');
+        sessionStorage.removeItem('adminRol'); // <-- LA CURA AL ERROR FANTASMA
         alIniciarSesion(); 
         return;
     }
@@ -20,7 +21,6 @@ export const mostrarLoginAdmin = (alIniciarSesion) => {
     titulo.innerText = '🔒 Acceso Administrador';
     titulo.style.marginBottom = '20px';
 
-    // NUEVO: Pedimos también el usuario, no solo la clave
     const inputUsuario = document.createElement('input');
     inputUsuario.type = 'text';
     inputUsuario.placeholder = 'Nombre de usuario...';
@@ -46,7 +46,7 @@ export const mostrarLoginAdmin = (alIniciarSesion) => {
     btnIngresar.innerText = 'Ingresar';
     btnIngresar.className = 'admin-btn admin-btn-ingresar';
     
-    // LÓGICA DE VERIFICACIÓN CON LA BASE DE DATOS
+    // LÓGICA DE VERIFICACIÓN
     btnIngresar.addEventListener('click', async () => {
         btnIngresar.innerText = 'Verificando...';
         
@@ -67,16 +67,19 @@ export const mostrarLoginAdmin = (alIniciarSesion) => {
                 return;
             }
 
-            const datos = await respuesta.json(); // Obtenemos el nombre y el ID del backend
+            const datos = await respuesta.json(); 
 
-            // Guardamos el pase VIP y QUIÉN es el que entró
+            // 2. INICIAR SESIÓN: Guardamos los 4 datos sincronizados
             sessionStorage.setItem('isAdmin', 'true');
             sessionStorage.setItem('adminNombre', datos.nombre);
             sessionStorage.setItem('adminId', datos.id);
+            sessionStorage.setItem('adminRol', datos.rol); // <-- GUARDAMOS EL ROL CORRECTO
             
             overlay.remove();
             alIniciarSesion(); 
-            alert(`¡Bienvenido, ${datos.nombre}!`); // Un saludo para confirmar que funcionó
+            
+            // Un pequeño saludo para confirmar qué nivel de acceso te dio el sistema
+            alert(`¡Bienvenido, ${datos.nombre}!\nNivel de acceso: ${datos.rol === 'SUPERADMIN' ? '👑 JEFE' : '👷‍♂️ ENCARGADO'}`);
 
         } catch (error) {
             mensajeError.innerText = 'Error al conectar con el servidor ❌';

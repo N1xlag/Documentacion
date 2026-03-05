@@ -5,6 +5,7 @@ import { EditarDoc } from './pages/Principal/EditarDoc.js';
 import { Buscador } from './pages/Buscador/Buscador.js';
 import { Papelera } from './pages/Papelera/Papelera.js';
 import { Auditoria } from './pages/Auditoria/Auditoria.js';
+import { Personal } from './pages/Personal/Personal.js';
 
 export const App = () => {
     const contenedorApp = document.createElement('div');
@@ -39,6 +40,9 @@ export const App = () => {
         else if (pagina === 'auditoria') {
          vistaActual.append(Auditoria());
         }
+        else if (pagina === 'personal') {
+         vistaActual.append(Personal());
+     }
     };
 
     const headerComponent = Header(navegarA);

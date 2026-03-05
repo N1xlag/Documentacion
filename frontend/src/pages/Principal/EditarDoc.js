@@ -12,7 +12,7 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
     ladoIzq.className = 'cargar-lado-izq';
 
     const tituloArchivo = document.createElement('h3');
-    tituloArchivo.innerText = '⚙️ Gestión de Archivos';
+    tituloArchivo.innerText = ' Gestión de Archivos';
     
     // --- ARCHIVOS VIEJOS ---
     let archivosExistentes = documentoOriginal.archivosAdjuntos ? [...documentoOriginal.archivosAdjuntos] : [];
@@ -32,13 +32,13 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
             archivosExistentes.forEach((archivo, index) => {
                 const item = document.createElement('div');
                 item.className = 'cargar-item-archivo';
-                
-                const icono = archivo.tipo === 'pdf' ? '📄' : '🖼️';
+            
+                const icono = archivo.tipo === 'pdf' ? '' : '';
                 const nombre = document.createElement('span');
                 nombre.innerText = `${icono} ${archivo.nombreOriginal}`;
 
                 const btnEliminar = document.createElement('span');
-                btnEliminar.innerText = ' ❌';
+                btnEliminar.innerText = ' X ';
                 btnEliminar.className = 'cargar-btn-eliminar-archivo';
                 btnEliminar.title = "Eliminar este archivo";
                 
@@ -76,12 +76,12 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
         archivosParaSubir.forEach((archivo, index) => {
             const item = document.createElement('div');
             item.className = 'cargar-item-archivo';
-            const icono = archivo.name.toLowerCase().endsWith('.pdf') ? '📄' : '🖼️';
+            const icono = archivo.name.toLowerCase().endsWith('.pdf') ? '' : '';
             const nombreArchivo = document.createElement('span');
             nombreArchivo.innerText = `${icono} ${archivo.name}`;
 
             const btnEliminar = document.createElement('span');
-            btnEliminar.innerText = ' ❌';
+            btnEliminar.innerText = ' X ';
             btnEliminar.className = 'cargar-btn-eliminar-archivo';
             btnEliminar.addEventListener('click', () => {
                 archivosParaSubir.splice(index, 1);
@@ -117,7 +117,7 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
     ladoDer.className = 'cargar-lado-der';
 
     const tituloFormulario = document.createElement('h3');
-    tituloFormulario.innerText = '✏️ Editar Registro';
+    tituloFormulario.innerText = ' Editar Registro';
 
     const categorias = ['Seleccione una...', 'Producción', 'Clases / Reuniones', 'Activos / Inventario', 'Administrativo / RRHH', 'Propio', 'Otros'];
     
@@ -204,7 +204,7 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
             mostrarPopup('warning', 'Título y categoría son obligatorios.'); return;
         }
 
-        btnGuardar.innerText = 'Actualizando... ⏳';
+        btnGuardar.innerText = 'Actualizando...';
         btnGuardar.disabled = true;
 
         try {

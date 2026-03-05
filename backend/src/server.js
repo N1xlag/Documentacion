@@ -84,7 +84,7 @@ if (!fs.existsSync(dirBackups)){
 }
 
 // 2. Programar la alarma: '0 17 * * *' significa "Todos los días a las 17:00 (5 PM)"
-cron.schedule('* * * * *', async () => {
+cron.schedule('0 17 * * *', async () => {
     console.log('⏳ [5:00 PM] Iniciando Backup Automático del Sistema...');
     try {
         // Le pedimos al cerebro que junte todos los datos

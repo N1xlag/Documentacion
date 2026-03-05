@@ -84,7 +84,7 @@ export const CargarDoc = () => {
     const campoDescripcion = InputGenerico('Descripción breve', 'Resumen corto del archivo');
     
     const hoy = new Date();
-    const fechaString = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    const fechaString = `${String(hoy.getDate()).padStart(2, '0')}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${hoy.getFullYear()}`;
     const campoFecha = InputGenerico('Fecha del Evento', '', 'date');
     campoFecha.input.value = fechaString; 
 
