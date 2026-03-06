@@ -1,46 +1,72 @@
-import { InputGenerico } from '../../components/Input.js';
+import { InputGenerico } from '../../components/Input.js'; // Asegura mayúscula si así está en tu carpeta
 import { mostrarPopup } from '../../components/Popup.js';
 import { api } from '../../services/api.js';
 import './CargarDoc.css';
 
 export const CargarDoc = () => {
     const contenedorPrincipal = document.createElement('div');
-    contenedorPrincipal.className = 'cargar-contenedor';
+    contenedorPrincipal.style.display = 'flex';
+    contenedorPrincipal.style.flexWrap = 'wrap';
+    contenedorPrincipal.style.gap = 'var(--spacing-lg)';
+    contenedorPrincipal.style.padding = 'var(--spacing-xl)';
+    contenedorPrincipal.style.maxWidth = '1300px';
+    contenedorPrincipal.style.margin = '0 auto';
+    contenedorPrincipal.style.alignItems = 'flex-start';
 
     // ======== LADO IZQUIERDO: ARCHIVOS ========
     const ladoIzq = document.createElement('div');
-    ladoIzq.className = 'cargar-lado-izq';
+    ladoIzq.className = 'card';
+    ladoIzq.style.flex = '1';
+    ladoIzq.style.minWidth = '300px';
+    ladoIzq.style.padding = 'var(--spacing-lg)';
 
     const tituloArchivo = document.createElement('h3');
     tituloArchivo.innerText = 'Subir Archivo';
+    tituloArchivo.style.color = 'var(--color-tercero)';
+    tituloArchivo.style.borderBottom = '2px solid var(--border-color)';
+    tituloArchivo.style.paddingBottom = 'var(--spacing-sm)';
+    tituloArchivo.style.marginBottom = 'var(--spacing-md)';
     
-    // 1. NUESTRO CARRITO DE ARCHIVOS
     let archivosParaSubir = [];
 
     const inputArchivo = document.createElement('input');
     inputArchivo.type = 'file';
     inputArchivo.accept = '.pdf, .jpg, .png'; 
-    inputArchivo.className = 'cargar-input-archivo';
+    inputArchivo.className = 'input'; // Design System
     inputArchivo.multiple = true; 
+    inputArchivo.style.width = '100%';
+    inputArchivo.style.marginBottom = 'var(--spacing-md)';
 
-    // 2. LA CAJITA VISUAL PARA MOSTRAR LO QUE VAMOS AGREGANDO
     const contenedorListaArchivos = document.createElement('div');
-    contenedorListaArchivos.className = 'cargar-lista-archivos-visual';
 
     const actualizarListaVisual = () => {
         contenedorListaArchivos.innerHTML = ''; 
-
         archivosParaSubir.forEach((archivo, index) => {
             const item = document.createElement('div');
-            item.className = 'cargar-item-archivo';
+            // Diseño de "Cajita de archivo" profesional
+            item.style.display = 'flex';
+            item.style.justifyContent = 'space-between';
+            item.style.alignItems = 'center';
+            item.style.padding = 'var(--spacing-sm) var(--spacing-md)';
+            item.style.backgroundColor = 'var(--bg-secundario)';
+            item.style.border = '1px solid var(--border-color)';
+            item.style.borderRadius = 'var(--border-radius-md)';
+            item.style.marginBottom = 'var(--spacing-sm)';
             
-            const icono = archivo.name.toLowerCase().endsWith('.pdf') ? '' : '';
+            const icono = archivo.name.toLowerCase().endsWith('.pdf') ? '📄' : '🖼️';
             const nombreArchivo = document.createElement('span');
             nombreArchivo.innerText = `${icono} ${archivo.name}`;
+            nombreArchivo.style.fontSize = 'var(--font-size-sm)';
+            nombreArchivo.style.color = 'var(--text-principal)';
+            nombreArchivo.style.overflow = 'hidden';
+            nombreArchivo.style.textOverflow = 'ellipsis';
+            nombreArchivo.style.whiteSpace = 'nowrap';
 
             const btnEliminar = document.createElement('span');
-            btnEliminar.innerText = ' X ';
-            btnEliminar.className = 'cargar-btn-eliminar-archivo';
+            btnEliminar.innerText = '✕';
+            btnEliminar.style.color = 'var(--color-error)';
+            btnEliminar.style.cursor = 'pointer';
+            btnEliminar.style.fontWeight = 'bold';
             
             btnEliminar.addEventListener('click', () => {
                 archivosParaSubir.splice(index, 1); 
@@ -52,7 +78,6 @@ export const CargarDoc = () => {
         });
     };
 
-    // 3. EVENTO: Cuando el usuario elige un archivo
     inputArchivo.addEventListener('change', (evento) => {
         const nuevosArchivos = Array.from(evento.target.files); 
         nuevosArchivos.forEach(archivo => archivosParaSubir.push(archivo));
@@ -62,24 +87,35 @@ export const CargarDoc = () => {
 
     const textoO = document.createElement('p');
     textoO.innerText = '— Y/O —'; 
-    textoO.className = 'cargar-texto-separador';
+    textoO.style.textAlign = 'center';
+    textoO.style.color = 'var(--text-disabled)';
+    textoO.style.margin = 'var(--spacing-md) 0';
     
     const inputVideo = document.createElement('input');
     inputVideo.type = 'text';
-    inputVideo.placeholder = 'Enlace de video...';
-    inputVideo.className = 'cargar-input-video';
+    inputVideo.placeholder = 'Enlace de video (Opcional)...';
+    inputVideo.className = 'input'; // Design System
+    inputVideo.style.width = '100%';
 
     ladoIzq.append(tituloArchivo, inputArchivo, contenedorListaArchivos, textoO, inputVideo);
 
     // ======== LADO DERECHO: FORMULARIO DINÁMICO ========
     const ladoDer = document.createElement('div');
-    ladoDer.className = 'cargar-lado-der';
+    ladoDer.className = 'card';
+    ladoDer.style.flex = '2';
+    ladoDer.style.minWidth = '400px';
+    ladoDer.style.padding = 'var(--spacing-lg)';
 
     const tituloFormulario = document.createElement('h3');
-    tituloFormulario.innerText = 'Detalles';
+    tituloFormulario.innerText = 'Detalles del Documento';
+    tituloFormulario.style.color = 'var(--color-tercero)';
+    tituloFormulario.style.borderBottom = '2px solid var(--border-color)';
+    tituloFormulario.style.paddingBottom = 'var(--spacing-sm)';
+    tituloFormulario.style.marginBottom = 'var(--spacing-md)';
 
     const categorias = ['Seleccione una...', 'Producción', 'Clases / Reuniones', 'Activos / Inventario', 'Administrativo / RRHH', 'Propio', 'Otros'];
     
+    // Asumimos que InputGenerico ya devuelve los contenedores bien formateados.
     const campoTitulo = InputGenerico('Título del Documento', 'Ej: Informe del Primer Ciclo de Produccion');
     const campoDescripcion = InputGenerico('Descripción breve', 'Resumen corto del archivo');
     
@@ -97,7 +133,6 @@ export const CargarDoc = () => {
             const anio = parseInt(partes[0]);
             const mes = parseInt(partes[1]);
             const dia = parseInt(partes[2]);
-            
             if (mes === 1 || (mes === 2 && dia <= 15)) campoGestion.input.value = `3-${anio - 1}`;
             else if ((mes === 2 && dia > 15) || (mes >= 3 && mes <= 6) || (mes === 7 && dia <= 10)) campoGestion.input.value = `1-${anio}`;
             else if ((mes === 7 && dia > 10) || (mes === 8 && dia <= 10)) campoGestion.input.value = `4-${anio}`;
@@ -111,8 +146,11 @@ export const CargarDoc = () => {
     const campoCategoria = InputGenerico('Categoría', '', 'select', categorias);
 
     const contenedorDinamico = document.createElement('div');
-    contenedorDinamico.className = 'cargar-dinamico';
     contenedorDinamico.style.display = 'none'; 
+    contenedorDinamico.style.padding = 'var(--spacing-md)';
+    contenedorDinamico.style.backgroundColor = 'var(--bg-secundario)';
+    contenedorDinamico.style.borderRadius = 'var(--border-radius-md)';
+    contenedorDinamico.style.marginTop = 'var(--spacing-md)';
 
     campoCategoria.input.addEventListener('change', (evento) => {
         const seleccion = evento.target.value;
@@ -137,7 +175,11 @@ export const CargarDoc = () => {
 
     const btnGuardar = document.createElement('button');
     btnGuardar.innerText = 'GUARDAR REGISTRO';
-    btnGuardar.className = 'cargar-btn-guardar'; // Clase actualizada para el nuevo CSS
+    btnGuardar.className = 'btn btn-primary'; // Design System
+    btnGuardar.style.width = '100%';
+    btnGuardar.style.marginTop = 'var(--spacing-xl)';
+    btnGuardar.style.fontSize = 'var(--font-size-md)';
+    btnGuardar.style.padding = 'var(--spacing-md)';
 
     // ======== LÓGICA DE GUARDADO ========
     btnGuardar.addEventListener('click', async () => {
@@ -150,7 +192,6 @@ export const CargarDoc = () => {
 
         try {
             const listaArchivosSubidos = [];
-            
             if (archivosParaSubir.length > 0) {
                 for (const archivoFisico of archivosParaSubir) {
                     const rutaServidor = await api.subirArchivoFisico(archivoFisico);
@@ -169,7 +210,7 @@ export const CargarDoc = () => {
             });
 
             const nuevoRegistro = {
-                id: Date.now().toString(), // Aseguramos que el ID sea string para Prisma
+                id: Date.now().toString(),
                 titulo: campoTitulo.input.value,
                 descripcion: campoDescripcion.input.value,
                 fecha: campoFecha.input.value,
@@ -195,21 +236,13 @@ export const CargarDoc = () => {
         } catch (error) {
             mostrarPopup('error', 'Error de conexión. Cancelando subida...');
             console.error(error);
-            for (const archivo of listaArchivosSubidos) {
-                await api.eliminarArchivoFisico(archivo.ruta);
-            }
         } finally {
             btnGuardar.innerText = 'GUARDAR REGISTRO';
             btnGuardar.disabled = false;
         }
     });
 
-    // CAJA DE ACCIONES PARA ALINEAR EL BOTÓN (Diseño nuevo)
-    const cajaAcciones = document.createElement('div');
-    cajaAcciones.className = 'cargar-acciones';
-    cajaAcciones.append(btnGuardar);
-
-    ladoDer.append(tituloFormulario, campoTitulo.contenedor, campoDescripcion.contenedor, campoFecha.contenedor, campoGestion.contenedor, campoEtiquetas.contenedor, campoCategoria.contenedor, contenedorDinamico, cajaAcciones);
+    ladoDer.append(tituloFormulario, campoTitulo.contenedor, campoDescripcion.contenedor, campoFecha.contenedor, campoGestion.contenedor, campoEtiquetas.contenedor, campoCategoria.contenedor, contenedorDinamico, btnGuardar);
     contenedorPrincipal.append(ladoIzq, ladoDer);
     return contenedorPrincipal;
 };

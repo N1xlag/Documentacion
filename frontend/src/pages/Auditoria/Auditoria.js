@@ -48,7 +48,7 @@ export const Auditoria = () => {
         btnBuscar.addEventListener('click', async () => {
             if (!inputInicio.value || !inputFin.value) return alert("Selecciona ambas fechas");
             
-            cajaResultados.innerHTML = '<p>Buscando en la bóveda de seguridad...</p>';
+            cajaResultados.innerHTML = '<p>Buscando...</p>';
             
             try {
                 const registros = await api.obtenerAuditoria(inputInicio.value, inputFin.value);
@@ -66,8 +66,8 @@ export const Auditoria = () => {
                                 <th style="padding: 12px; border: 1px solid #cbd5e1;">Fecha y Hora Exacta</th>
                                 <th style="padding: 12px; border: 1px solid #cbd5e1;">Usuario</th>
                                 <th style="padding: 12px; border: 1px solid #cbd5e1;">Acción Realizada</th>
-                                <th style="padding: 12px; border: 1px solid #cbd5e1;">Documento Afectado</th>
-                                <th style="padding: 12px; border: 1px solid #cbd5e1;">Firma Criptográfica (Inhackeable)</th>
+                                <th style="padding: 12px; border: 1px solid #cbd5e1;">Doc Afectado</th>
+                                <th style="padding: 12px; border: 1px solid #cbd5e1;">Firma</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -75,20 +75,25 @@ export const Auditoria = () => {
 
                 registros.forEach(reg => {
                     const fechaAmigable = new Date(reg.fecha).toLocaleString();
-                    const nombreDoc = reg.documento ? reg.documento.titulo : '<i>Documento Destruido/No existe</i>';
+                    
+                    // Si la acción es sobre una cuenta, no hay documento
+                    let afectado = '<i>N/A</i>';
+                    if (reg.documento) afectado = reg.documento.titulo;
+                    else if (!reg.accion.includes('CUENTA')) afectado = '<i>Documento Borrado Permanentemente</i>';
                     
                     // Colorear las acciones para que sea más fácil leer
                     let colorAccion = 'black';
                     if (reg.accion.includes('CREÓ')) colorAccion = '#10b981'; // Verde
-                    if (reg.accion.includes('BORRADO') || reg.accion.includes('DESTRUCCIÓN')) colorAccion = '#ef4444'; // Rojo
+                    if (reg.accion.includes('BORRADO') || reg.accion.includes('ELIMINADO') || reg.accion.includes('DESACTIVÓ')) colorAccion = '#ef4444'; // Rojo
                     if (reg.accion.includes('EDITÓ')) colorAccion = '#f59e0b'; // Naranja
+                    if (reg.accion.includes('CUENTA')) colorAccion = '#3b82f6'; // Azul para gestión de personal
 
                     tablaHTML += `
                         <tr style="border-bottom: 1px solid #e2e8f0;">
                             <td style="padding: 10px; font-size: 14px;">${fechaAmigable}</td>
                             <td style="padding: 10px; font-weight: bold; color: #334155;">${reg.usuario.nombre}</td>
                             <td style="padding: 10px; font-weight: bold; color: ${colorAccion};">${reg.accion}</td>
-                            <td style="padding: 10px; font-size: 14px;">${nombreDoc}</td>
+                            <td style="padding: 10px; font-size: 14px;">${afectado}</td>
                             <td style="padding: 10px; font-family: monospace; font-size: 11px; color: #94a3b8; max-width: 200px; word-wrap: break-word;">
                                 ${reg.hashSeguro}
                             </td>
@@ -103,7 +108,7 @@ export const Auditoria = () => {
                 cajaResultados.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
             }
         });
-    }, 100); // Pequeño retraso para asegurar que el HTML se dibujó antes de buscar los IDs
+    }, 100); 
 
     return contenedor;
 };

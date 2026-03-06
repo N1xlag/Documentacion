@@ -118,6 +118,12 @@ export const api = {
         return await respuesta.json();
     },
 
+    obtenerGestionesUnicas: async () => {
+        const respuesta = await fetch(`${API_URL}/documentos/estado/gestiones`);
+        if (!respuesta.ok) return [];
+        return await respuesta.json();
+    },
+
     crearUsuario: async (datos) => {
         datos.creadorId = sessionStorage.getItem('adminId'); // Etiquetamos quién da la orden
         const respuesta = await fetch(`http://${window.location.hostname}:3001/api/auth/usuarios`, {

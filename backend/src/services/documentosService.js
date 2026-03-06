@@ -16,9 +16,8 @@ const registrarAuditoria = async (accion, documentoId, usuarioId) => {
     });
 };
 
-// ======== 2. BUSCADOR ========
+// ======== 2. BUSCADOR (AHORA CON PAGINACIÓN PRO) ========
 const obtenerTodos = async (filtros = {}) => {
-    // TRUCO: Solo muestra documentos "ACTIVOS". Los que tienen votos para borrarse se vuelven invisibles.
     const where = { estado: 'ACTIVO' }; 
     
     if (filtros.texto) {
@@ -30,11 +29,39 @@ const obtenerTodos = async (filtros = {}) => {
     if (filtros.categoria && filtros.categoria !== 'Todas') where.categoria = filtros.categoria;
     if (filtros.gestion && filtros.gestion !== 'Todas') where.gestion = filtros.gestion;
 
+    // --- LA MAGIA DE LA PAGINACIÓN ---
+    const limitePorPagina = 100; // Traeremos de 100 en 100
+    const paginaActual = filtros.pagina ? parseInt(filtros.pagina) : 1;
+    // Si estamos en la pag 1, saltamos 0. Si estamos en la pag 2, saltamos los primeros 100.
+    const saltar = (paginaActual - 1) * limitePorPagina; 
+
     const documentos = await prisma.documento.findMany({
-        where: where, include: { archivos: true }, orderBy: { fechaSubida: 'desc' }, take: 100
+        where: where, 
+        include: { archivos: true }, 
+        orderBy: { fechaSubida: 'desc' }, 
+        take: limitePorPagina, // Toma 100
+        skip: saltar           // Salta X
     });
+    
     return documentos.map(doc => ({ ...doc, archivosAdjuntos: doc.archivos }));
 };
+
+// ======== OBTENER GESTIONES DINÁMICAS ========
+const obtenerGestiones = async () => {
+    // Le pedimos a Prisma que busque solo la columna "gestion", y que no traiga repetidos (distinct)
+    const resultados = await prisma.documento.findMany({
+        where: { estado: 'ACTIVO' },
+        select: { gestion: true },
+        distinct: ['gestion'],
+        orderBy: { gestion: 'desc' } // Para que las más nuevas salgan primero
+    });
+    
+    // Convertimos el resultado raro de base de datos en un arreglo simple: ['1-2026', '2-2025']
+    return resultados.map(r => r.gestion).filter(Boolean); 
+};
+
+// NO OLVIDES EXPORTARLA AL FINAL DEL ARCHIVO:
+// module.exports = { obtenerTodos, obtenerGestiones, crearDocumento, ... }
 
 // ======== 3. CREAR ========
 const crearDocumento = async (data) => {
@@ -166,28 +193,26 @@ const procesarVotoPapelera = async (id, usuarioId, decision) => {
 
     
 };
+// ======== OBTENER REPORTE DE AUDITORÍA (FECHAS EXACTAS BLINDADAS) ========
+const obtenerReporteAuditoria = async (inicio, fin) => {
+    // Al forzar la "T" y la hora exacta, evitamos que Node.js intente "adivinar" 
+    // la zona horaria y nos reste días por accidente.
+    const fechaInicioExacta = new Date(`${inicio}T00:00:00.000`);
+    const fechaFinExacta = new Date(`${fin}T23:59:59.999`);
 
-// ======== 7. REPORTE DE AUDITORÍA ========
-const obtenerReporteAuditoria = async (fechaInicio, fechaFin) => {
-    // Ajustamos la fecha fin para que incluya todo ese día hasta las 23:59
-    const finAjustado = new Date(fechaFin);
-    finAjustado.setHours(23, 59, 59, 999);
-
-    const registros = await prisma.auditoria.findMany({
+    return await prisma.auditoria.findMany({
         where: {
             fecha: {
-                gte: new Date(fechaInicio), // gte = Mayor o igual que
-                lte: finAjustado            // lte = Menor o igual que
+                gte: fechaInicioExacta,
+                lte: fechaFinExacta 
             }
         },
         include: {
             usuario: { select: { nombre: true } },
-            documento: { select: { titulo: true } } // Si el doc se borró, esto vendrá nulo
+            documento: { select: { titulo: true } }
         },
         orderBy: { fecha: 'desc' }
     });
-
-    return registros;
 };
 
 // ======== 8. RESPALDO TOTAL (BACKUP) ========
@@ -208,4 +233,4 @@ const generarBackupTotal = async () => {
     };
 };
 
-module.exports = { obtenerTodos, crearDocumento, actualizarDocumento, eliminarDocumento, obtenerPapelera, procesarVotoPapelera, obtenerReporteAuditoria, generarBackupTotal };
+module.exports = { obtenerTodos, obtenerGestiones, crearDocumento, actualizarDocumento, eliminarDocumento, obtenerPapelera, procesarVotoPapelera, obtenerReporteAuditoria, generarBackupTotal };

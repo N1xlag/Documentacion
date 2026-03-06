@@ -1,50 +1,42 @@
-// src/components/Popup.js
-import './Popup.css';
+// frontend/src/Components/Popup.js
 
 export const mostrarPopup = (tipo, mensaje, autoCloseMs = 3000) => {
-    // 1. Si ya hay un popup abierto, lo borramos para no encimar
-    const popupExistente = document.getElementById('sistema-popup');
-    if (popupExistente) popupExistente.remove();
-
-    // 2. Creamos el fondo oscuro (Overlay)
+    // Tipos válidos: 'success', 'error', 'warning'
+    
+    // 1. Crear el fondo oscuro
     const overlay = document.createElement('div');
-    overlay.id = 'sistema-popup';
     overlay.className = 'popup-overlay';
 
-    // 3. Creamos la caja blanca del mensaje
-    const popupBox = document.createElement('div');
-    popupBox.className = `popup ${tipo}`; // Agrega 'success', 'error' o 'warning'
+    // 2. Crear la caja del popup
+    const popup = document.createElement('div');
+    popup.className = `popup ${tipo}`;
 
-    // 4. Creamos el icono
+    // 3. Crear el ícono
     const icon = document.createElement('div');
     icon.className = 'popup-icon';
     if (tipo === 'success') icon.innerText = '✓';
     if (tipo === 'error') icon.innerText = '✕';
     if (tipo === 'warning') icon.innerText = '⚠';
 
-    // 5. Creamos el texto
+    // 4. Crear el texto
     const text = document.createElement('div');
     text.className = 'popup-message';
     text.innerText = mensaje;
 
-    // Unimos todo
-    popupBox.append(icon, text);
-    overlay.append(popupBox);
+    // 5. Ensamblar
+    popup.append(icon, text);
+    overlay.append(popup);
 
-    // Lógica para cerrar si hacen clic afuera de la caja blanca
-    const cerrarPopup = () => overlay.remove();
-    overlay.addEventListener('click', cerrarPopup);
-    popupBox.addEventListener('click', (e) => e.stopPropagation()); // Evita que se cierre si tocan la caja blanca
+    // 6. Eventos para cerrar manual o automáticamente
+    overlay.addEventListener('click', () => overlay.remove());
+    popup.addEventListener('click', (e) => e.stopPropagation()); // Evita que se cierre al hacer clic en la caja
 
-    // Inyectamos el popup directamente en el body (por encima de todo el sistema)
-    document.body.append(overlay);
+    // 7. Mostrar en pantalla
+    document.body.appendChild(overlay);
 
-    // Lógica para que se cierre solo después de unos segundos
     if (autoCloseMs > 0) {
         setTimeout(() => {
-            if (document.body.contains(overlay)) {
-                cerrarPopup();
-            }
+            if (document.body.contains(overlay)) overlay.remove();
         }, autoCloseMs);
     }
 };

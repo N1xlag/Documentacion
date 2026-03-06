@@ -1,4 +1,3 @@
-/* src/components/Popup.css */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -14,8 +13,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .popup {
@@ -32,13 +35,27 @@
 }
 
 @keyframes slideIn {
-  from { transform: translateY(-50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.popup.success { border-color: #4CAF50; }
-.popup.error { border-color: #f44336; }
-.popup.warning { border-color: #ff9800; }
+.popup.success {
+  border-color: #4CAF50;
+}
+
+.popup.error {
+  border-color: #f44336;
+}
+
+.popup.warning {
+  border-color: #ff9800;
+}
 
 .popup-icon {
   width: 60px;
@@ -51,9 +68,20 @@
   font-weight: bold;
 }
 
-.popup.success .popup-icon { background-color: #4CAF50; color: white; }
-.popup.error .popup-icon { background-color: #f44336; color: white; }
-.popup.warning .popup-icon { background-color: #ff9800; color: white; }
+.popup.success .popup-icon {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.popup.error .popup-icon {
+  background-color: #f44336;
+  color: white;
+}
+
+.popup.warning .popup-icon {
+  background-color: #ff9800;
+  color: white;
+}
 
 .popup-message {
   font-size: 24px;
@@ -61,4 +89,22 @@
   text-align: center;
   color: black;
   line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .popup {
+    min-width: 300px;
+    max-width: 90vw;
+    padding: 30px 40px;
+  }
+
+  .popup-message {
+    font-size: 20px;
+  }
+
+  .popup-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 32px;
+  }
 }

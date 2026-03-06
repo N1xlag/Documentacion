@@ -64,7 +64,7 @@ export const Header = (onNavigate) => {
     // SOLO LOS JEFES VEN ESTO
     if (esSuperAdmin) {
         btnPersonal = document.createElement('button');
-        btnPersonal.innerText = '👥 PERSONAL';
+        btnPersonal.innerText = 'PERSONAL';
         btnPersonal.style.padding = '10px 20px';
         btnPersonal.style.fontWeight = 'bold';
         btnPersonal.style.background = '#eff6ff'; 
@@ -81,7 +81,7 @@ export const Header = (onNavigate) => {
     // TODOS LOS ADMINS Y JEFES VEN ESTO
     if (esAdmin) {
         btnPapelera = document.createElement('button');
-        btnPapelera.innerText = '🗑️ PAPELERA';
+        btnPapelera.innerText = 'PAPELERA';
         btnPapelera.style.padding = '10px 20px';
         btnPapelera.style.fontWeight = 'bold';
         btnPapelera.style.background = '#fef2f2'; 
@@ -95,7 +95,7 @@ export const Header = (onNavigate) => {
         btnPapelera.addEventListener('click', () => onNavigate('papelera'));
 
         btnAuditoria = document.createElement('button');
-        btnAuditoria.innerText = '🛡️ AUDITORÍA';
+        btnAuditoria.innerText = 'AUDITORÍA';
         btnAuditoria.style.padding = '10px 20px';
         btnAuditoria.style.fontWeight = 'bold';
         btnAuditoria.style.background = '#f0fdf4'; 

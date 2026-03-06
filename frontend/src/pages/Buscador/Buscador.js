@@ -4,49 +4,65 @@ import './Buscador.css';
 
 export const Buscador = async () => {
     const contenedorPrincipal = document.createElement('div');
-    contenedorPrincipal.className = 'buscador-contenedor';
+    // Usamos flexbox para que se adapte al ancho
+    contenedorPrincipal.style.display = 'flex';
+    contenedorPrincipal.style.flexWrap = 'wrap';
+    contenedorPrincipal.style.gap = 'var(--spacing-lg)';
+    contenedorPrincipal.style.padding = 'var(--spacing-xl)';
+    contenedorPrincipal.style.maxWidth = '1300px';
+    contenedorPrincipal.style.margin = '0 auto';
+    contenedorPrincipal.style.alignItems = 'flex-start';
 
-    // Traemos los datos de PostgreSQL
     let todosLosDocumentos = [];
     try {
         todosLosDocumentos = await api.obtenerDocumentos();
     } catch (error) {
-        console.error(error);
-        contenedorPrincipal.innerHTML = '<h3 style="color:red; text-align:center;">Error al cargar la base de datos.</h3>';
+        contenedorPrincipal.innerHTML = `<div class="alert alert-error" style="width: 100%;">Error al cargar la base de datos: ${error.message}</div>`;
         return contenedorPrincipal;
     }
 
     // ======== PANEL IZQUIERDO: FILTROS ========
     const panelFiltros = document.createElement('div');
-    panelFiltros.className = 'buscador-panel-filtros';
+    panelFiltros.className = 'card';
+    panelFiltros.style.flex = '1';
+    panelFiltros.style.minWidth = '280px';
+    panelFiltros.style.padding = 'var(--spacing-lg)';
 
     const tituloFiltros = document.createElement('h3');
-    tituloFiltros.innerText = 'FILTROS';
+    tituloFiltros.innerText = 'Filtros de Búsqueda';
+    tituloFiltros.style.color = 'var(--color-tercero)';
+    tituloFiltros.style.borderBottom = '2px solid var(--border-color)';
+    tituloFiltros.style.paddingBottom = 'var(--spacing-sm)';
+    tituloFiltros.style.marginBottom = 'var(--spacing-md)';
 
     const crearFiltro = (textoLabel, tipoInput, placeholder = '') => {
         const grupo = document.createElement('div');
-        grupo.className = 'buscador-grupo';
+        grupo.style.marginBottom = 'var(--spacing-md)';
         
         const label = document.createElement('label');
-        label.className = 'form-label'; 
+        label.style.display = 'block';
+        label.style.fontWeight = 'var(--font-weight-semibold)';
+        label.style.marginBottom = 'var(--spacing-xs)';
+        label.style.color = 'var(--text-secundario)';
         label.innerText = textoLabel;
         
         let input;
         if (tipoInput === 'select') {
             input = document.createElement('select');
+            input.className = 'select'; // Del Design System
         } else {
             input = document.createElement('input');
             input.type = tipoInput;
             input.placeholder = placeholder;
+            input.className = 'input'; // Del Design System
         }
-        input.className = 'form-input'; 
+        input.style.width = '100%';
         
         grupo.append(label, input);
         return { grupo, input };
     };
 
     const filtroTexto = crearFiltro('Búsqueda (Título/Etiquetas)', 'text', 'Buscar...');
-    
     const filtroCategoria = crearFiltro('Filtrar por Categoría', 'select');
     const categoriasUnicas = ['Todas', ...new Set(todosLosDocumentos.map(doc => doc.categoria))];
     categoriasUnicas.forEach(cat => {
@@ -63,57 +79,50 @@ export const Buscador = async () => {
         filtroGestion.input.append(opcion);
     });
 
-    // Rango de fechas (Ahora se apilarán gracias al CSS)
     const grupoFechas = document.createElement('div');
-    grupoFechas.className = 'buscador-grupo';
-    
-    const labelFechas = document.createElement('label');
-    labelFechas.className = 'form-label';
-    labelFechas.innerText = 'Rango de Fechas';
+    grupoFechas.style.marginBottom = 'var(--spacing-md)';
+    grupoFechas.innerHTML = `<label style="display: block; font-weight: var(--font-weight-semibold); margin-bottom: var(--spacing-xs); color: var(--text-secundario);">Rango de Fechas</label>`;
     
     const cajaFechas = document.createElement('div');
-    cajaFechas.className = 'buscador-rango-fechas';
+    cajaFechas.style.display = 'flex';
+    cajaFechas.style.gap = 'var(--spacing-sm)';
     
     const fechaInicio = document.createElement('input');
-    fechaInicio.type = 'date'; 
-    fechaInicio.className = 'form-input';
+    fechaInicio.type = 'date'; fechaInicio.className = 'input'; fechaInicio.style.width = '100%';
     
     const fechaFin = document.createElement('input');
-    fechaFin.type = 'date'; 
-    fechaFin.className = 'form-input';
+    fechaFin.type = 'date'; fechaFin.className = 'input'; fechaFin.style.width = '100%';
     
     cajaFechas.append(fechaInicio, fechaFin);
-    grupoFechas.append(labelFechas, cajaFechas);
+    grupoFechas.append(cajaFechas);
 
     panelFiltros.append(tituloFiltros, filtroTexto.grupo, filtroCategoria.grupo, filtroGestion.grupo, grupoFechas);
 
     // ======== PANEL DERECHO: RESULTADOS ========
     const panelResultados = document.createElement('div');
-    panelResultados.className = 'buscador-panel-resultados';
+    panelResultados.style.flex = '3';
+    panelResultados.style.minWidth = '300px';
 
     const tituloResultados = document.createElement('h2');
-    tituloResultados.className = 'buscador-titulo-resultados';
     tituloResultados.innerText = 'Documentos Respaldados';
+    tituloResultados.style.color = 'var(--color-primario)';
+    tituloResultados.style.marginBottom = 'var(--spacing-md)';
 
     const rejilla = document.createElement('div');
-    rejilla.className = 'buscador-rejilla';
+    // Usamos CSS Grid nativo para las tarjetas
+    rejilla.style.display = 'grid';
+    rejilla.style.gridTemplateColumns = 'repeat(auto-fill, minmax(300px, 1fr))';
+    rejilla.style.gap = 'var(--spacing-md)';
 
     const renderizarTarjetas = (documentosFiltrados) => {
         rejilla.innerHTML = ''; 
         if (documentosFiltrados.length === 0) {
-            const msj = document.createElement('div');
-            msj.className = 'buscador-vacio';
-            msj.innerText = 'No se encontraron documentos con esos filtros 🕵️‍♂️';
-            rejilla.append(msj);
+            rejilla.innerHTML = `<div class="alert alert-info" style="grid-column: 1 / -1; padding: var(--spacing-lg); text-align: center;">No se encontraron documentos con esos filtros 🕵️‍♂️</div>`;
             return;
         }
-
-        documentosFiltrados.forEach(doc => {
-            rejilla.append(TarjetaDocumento(doc));
-        });
+        documentosFiltrados.forEach(doc => rejilla.append(TarjetaDocumento(doc)));
     };
 
-    // LÓGICA DE FILTRADO
     const aplicarFiltros = () => {
         const texto = filtroTexto.input.value.toLowerCase();
         const cat = filtroCategoria.input.value;
@@ -127,10 +136,8 @@ export const Buscador = async () => {
             const cumpleGes = ges === 'Todas' || doc.gestion === ges;
             const cumpleInicio = fInicio === '' || doc.fecha >= fInicio;
             const cumpleFin = fFin === '' || doc.fecha <= fFin;
-
             return cumpleTexto && cumpleCat && cumpleGes && cumpleInicio && cumpleFin;
         });
-
         renderizarTarjetas(filtrados);
     };
 
@@ -142,7 +149,6 @@ export const Buscador = async () => {
 
     renderizarTarjetas(todosLosDocumentos);
     panelResultados.append(tituloResultados, rejilla);
-
     contenedorPrincipal.append(panelFiltros, panelResultados);
     return contenedorPrincipal;
 };

@@ -64,6 +64,16 @@ router.get('/estado/backup', async (req, res) => {
     }
 });
 
+// GET: Obtener las gestiones únicas para el filtro
+router.get('/estado/gestiones', async (req, res) => {
+    try {
+        const gestiones = await docService.obtenerGestiones();
+        res.json(gestiones);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.post('/', async (req, res) => {
     try {
         if (!req.body.titulo || !req.body.categoria) {
