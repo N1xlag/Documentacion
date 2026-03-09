@@ -1,114 +1,209 @@
 import { api } from '../../services/api.js';
+import './Auditoria.css'; 
 
-export const Auditoria = () => {
-    const contenedor = document.createElement('div');
-    contenedor.style.padding = '30px';
-    contenedor.style.maxWidth = '1000px';
-    contenedor.style.margin = '0 auto';
+let registrosActuales = [];
 
-    contenedor.innerHTML = `
-        <h2 style="color: var(--color-secundario); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+const obtenerFechaHoy = () => {
+    const hoy = new Date();
+    return hoy.toISOString().split('T')[0];
+};
+
+const obtenerFechaHaceUnMes = () => {
+    const hoy = new Date();
+    const haceUnMes = new Date();
+    haceUnMes.setDate(hoy.getDate() - 30);
+    return haceUnMes.toISOString().split('T')[0];
+};
+
+const formatearFechaAmigable = (fecha) => {
+    return new Date(fecha).toLocaleString();
+};
+
+const obtenerColorAccion = (accion) => {
+    if (accion.includes('CREÓ')) return '#10b981';
+    if (accion.includes('BORRADO') || accion.includes('ELIMINADO') || accion.includes('DESACTIVÓ')) return '#ef4444';
+    if (accion.includes('EDITÓ')) return '#f59e0b';
+    if (accion.includes('CUENTA')) return '#3b82f6';
+    return 'black';
+};
+
+const obtenerDocumentoAfectado = (registro) => {
+    if (registro.documento) return registro.documento.titulo;
+    if (registro.accion.includes('CUENTA')) return '<span style="color: var(--text-disabled); font-weight: bold;">-</span>';
+    return '<span style="color: var(--text-disabled); font-style: italic; font-size: 12px;">(Histórico)</span>';
+};
+
+const crearFilaTabla = (registro) => {
+    const fechaAmigable = formatearFechaAmigable(registro.fecha);
+    const afectado = obtenerDocumentoAfectado(registro);
+    const colorAccion = obtenerColorAccion(registro.accion);
+    
+    return `
+        <tr class="auditoria-tabla-fila">
+            <td class="auditoria-tabla-celda">${fechaAmigable}</td>
+            <td class="auditoria-tabla-celda auditoria-celda-usuario">${registro.usuario.nombre}</td>
+            <td class="auditoria-tabla-celda auditoria-celda-accion" style="color: ${colorAccion};">${registro.accion}</td>
+            <td class="auditoria-tabla-celda">${afectado}</td>
+            <td class="auditoria-tabla-celda auditoria-celda-firma">
+                ${registro.hashSeguro}
+            </td>
+        </tr>
+    `;
+};
+
+const crearCabeceraTabla = () => {
+    return `
+        <thead>
+            <tr class="auditoria-tabla-cabecera">
+                <th class="auditoria-tabla-th">Fecha y Hora Exacta</th>
+                <th class="auditoria-tabla-th">Usuario</th>
+                <th class="auditoria-tabla-th">Acción Realizada</th>
+                <th class="auditoria-tabla-th">Doc Afectado</th>
+                <th class="auditoria-tabla-th">Firma</th>
+            </tr>
+        </thead>
+    `;
+};
+
+const crearTablaCompleta = (registros) => {
+    let tablaHTML = `
+        <table class="auditoria-tabla">
+            ${crearCabeceraTabla()}
+            <tbody>
+    `;
+    registros.forEach(registro => { tablaHTML += crearFilaTabla(registro); });
+    tablaHTML += `</tbody></table>`;
+    return tablaHTML;
+};
+
+const crearMensajeBuscando = () => '<p class="auditoria-mensaje-buscando">Buscando...</p>';
+const crearMensajeVacio = () => '<p class="auditoria-mensaje-vacio">No hubo movimientos en esas fechas.</p>';
+const crearMensajeError = (mensaje) => `<p class="auditoria-mensaje-error">Error: ${mensaje}</p>`;
+const validarFechas = (inicio, fin) => inicio && fin;
+
+const renderizarResultados = (registros, cajaResultados) => {
+    if (registros.length === 0) {
+        cajaResultados.innerHTML = crearMensajeVacio();
+        return;
+    }
+    cajaResultados.innerHTML = crearTablaCompleta(registros);
+};
+
+const exportarExcel = () => {
+    if (registrosActuales.length === 0) return;
+
+    let csvContent = "\uFEFF";
+    csvContent += "Fecha y Hora,Usuario,Accion Realizada,Documento Afectado,Firma Criptografica\n";
+
+    registrosActuales.forEach(reg => {
+
+        const fecha = formatearFechaAmigable(reg.fecha).replace(/,/g, '');
+        const usuario = reg.usuario.nombre;
+        const accion = reg.accion;
+        
+        let afectado = "N/A";
+        if (reg.documento) afectado = reg.documento.titulo;
+        else if (!reg.accion.includes('CUENTA')) afectado = "(Histórico)";
+
+        const firma = reg.hashSeguro;
+
+
+        const fila = `"${fecha}","${usuario}","${accion}","${afectado}","${firma}"`;
+        csvContent += fila + "\n";
+    });
+
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Auditoria_${obtenerFechaHoy()}.csv`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
+const buscarAuditoria = async (inicio, fin, cajaResultados, btnExcel) => {
+    if (!validarFechas(inicio, fin)) return alert("Selecciona ambas fechas");
+    
+    cajaResultados.innerHTML = crearMensajeBuscando();
+    btnExcel.style.display = 'none'; 
+    
+    try {
+        const registros = await api.obtenerAuditoria(inicio, fin); 
+        registrosActuales = registros; 
+        
+        renderizarResultados(registros, cajaResultados);
+        
+        if(registros.length > 0) {
+            btnExcel.style.display = 'block';
+        }
+    } catch (error) {
+        cajaResultados.innerHTML = crearMensajeError(error.message);
+    }
+};
+
+const configurarFechasIniciales = (inputInicio, inputFin) => {
+    inputFin.value = obtenerFechaHoy();
+    inputInicio.value = obtenerFechaHaceUnMes();
+};
+
+const configurarEventos = (btnBuscar, btnExcel, inputInicio, inputFin, cajaResultados) => {
+    btnBuscar.addEventListener('click', async () => {
+        await buscarAuditoria(inputInicio.value, inputFin.value, cajaResultados, btnExcel);
+    });
+    
+    btnExcel.addEventListener('click', exportarExcel);
+};
+
+const crearHTML = () => {
+    return `
+        <h2 class="auditoria-titulo">
              Registro Oficial de Movimientos (Auditoría)
         </h2>
-        <p style="color: #64748b; margin-bottom: 20px;">
+        <p class="auditoria-descripcion">
             Este registro está protegido por criptografía (Hash). Cualquier manipulación manual en la base de datos invalidará estas firmas, garantizando que las fechas y acciones mostradas son 100% reales e inalterables.
         </p>
         
-        <div style="display: flex; gap: 15px; align-items: flex-end; background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 20px;">
-            <div>
-                <label style="display: block; font-weight: bold; font-size: 14px; margin-bottom: 5px;">Fecha Inicio:</label>
-                <input type="date" id="audit-inicio" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+        <div class="auditoria-filtros">
+            <div class="auditoria-grupo-input">
+                <label class="auditoria-label">Fecha Inicio:</label>
+                <input type="date" id="audit-inicio" class="auditoria-input">
             </div>
-            <div>
-                <label style="display: block; font-weight: bold; font-size: 14px; margin-bottom: 5px;">Fecha Fin:</label>
-                <input type="date" id="audit-fin" style="padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;">
+            <div class="auditoria-grupo-input">
+                <label class="auditoria-label">Fecha Fin:</label>
+                <input type="date" id="audit-fin" class="auditoria-input">
             </div>
-            <button id="btn-buscar-audit" class="admin-btn" style="background: var(--color-primario); padding: 9px 20px; color: white; font-weight: bold; border-radius: 4px; cursor:pointer;">
-                 Generar Reporte
-            </button>
+            <div style="display: flex; gap: 10px; flex: 1; min-width: 300px;">
+                <button id="btn-buscar-audit" class="auditoria-btn-buscar" style="flex: 1;">
+                    Generar
+                </button>
+                <button id="btn-descargar-excel" class="auditoria-btn-descargar" style="flex: 1; display: none;">
+                    Descargar Excel
+                </button>
+            </div>
         </div>
 
-        <div id="caja-resultados-audit" style="overflow-x: auto;">
-            </div>
+        <div id="caja-resultados-audit" class="auditoria-caja-resultados"></div>
     `;
+};
 
-    // Lógica de búsqueda
-    setTimeout(() => {
-        const btnBuscar = document.getElementById('btn-buscar-audit');
-        const inputInicio = document.getElementById('audit-inicio');
-        const inputFin = document.getElementById('audit-fin');
-        const cajaResultados = document.getElementById('caja-resultados-audit');
+const inicializarComponente = () => {
+    const btnBuscar = document.getElementById('btn-buscar-audit');
+    const btnExcel = document.getElementById('btn-descargar-excel');
+    const inputInicio = document.getElementById('audit-inicio');
+    const inputFin = document.getElementById('audit-fin');
+    const cajaResultados = document.getElementById('caja-resultados-audit');
+    
+    configurarFechasIniciales(inputInicio, inputFin);
+    configurarEventos(btnBuscar, btnExcel, inputInicio, inputFin, cajaResultados);
+};
 
-        // Ponemos la fecha de hoy por defecto en "Fin" y hace 30 días en "Inicio"
-        const hoy = new Date();
-        inputFin.value = hoy.toISOString().split('T')[0];
-        const haceUnMes = new Date(); haceUnMes.setDate(hoy.getDate() - 30);
-        inputInicio.value = haceUnMes.toISOString().split('T')[0];
-
-        btnBuscar.addEventListener('click', async () => {
-            if (!inputInicio.value || !inputFin.value) return alert("Selecciona ambas fechas");
-            
-            cajaResultados.innerHTML = '<p>Buscando...</p>';
-            
-            try {
-                const registros = await api.obtenerAuditoria(inputInicio.value, inputFin.value);
-                
-                if (registros.length === 0) {
-                    cajaResultados.innerHTML = '<p style="color: #ef4444; font-weight:bold;">No hubo movimientos en esas fechas.</p>';
-                    return;
-                }
-
-                // Armamos una tabla HTML clásica y profesional
-                let tablaHTML = `
-                    <table style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                        <thead>
-                            <tr style="background: #1e293b; color: white; text-align: left;">
-                                <th style="padding: 12px; border: 1px solid #cbd5e1;">Fecha y Hora Exacta</th>
-                                <th style="padding: 12px; border: 1px solid #cbd5e1;">Usuario</th>
-                                <th style="padding: 12px; border: 1px solid #cbd5e1;">Acción Realizada</th>
-                                <th style="padding: 12px; border: 1px solid #cbd5e1;">Doc Afectado</th>
-                                <th style="padding: 12px; border: 1px solid #cbd5e1;">Firma</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-                registros.forEach(reg => {
-                    const fechaAmigable = new Date(reg.fecha).toLocaleString();
-                    
-                    // Si la acción es sobre una cuenta, no hay documento
-                    let afectado = '<i>N/A</i>';
-                    if (reg.documento) afectado = reg.documento.titulo;
-                    else if (!reg.accion.includes('CUENTA')) afectado = '<i>Documento Borrado Permanentemente</i>';
-                    
-                    // Colorear las acciones para que sea más fácil leer
-                    let colorAccion = 'black';
-                    if (reg.accion.includes('CREÓ')) colorAccion = '#10b981'; // Verde
-                    if (reg.accion.includes('BORRADO') || reg.accion.includes('ELIMINADO') || reg.accion.includes('DESACTIVÓ')) colorAccion = '#ef4444'; // Rojo
-                    if (reg.accion.includes('EDITÓ')) colorAccion = '#f59e0b'; // Naranja
-                    if (reg.accion.includes('CUENTA')) colorAccion = '#3b82f6'; // Azul para gestión de personal
-
-                    tablaHTML += `
-                        <tr style="border-bottom: 1px solid #e2e8f0;">
-                            <td style="padding: 10px; font-size: 14px;">${fechaAmigable}</td>
-                            <td style="padding: 10px; font-weight: bold; color: #334155;">${reg.usuario.nombre}</td>
-                            <td style="padding: 10px; font-weight: bold; color: ${colorAccion};">${reg.accion}</td>
-                            <td style="padding: 10px; font-size: 14px;">${afectado}</td>
-                            <td style="padding: 10px; font-family: monospace; font-size: 11px; color: #94a3b8; max-width: 200px; word-wrap: break-word;">
-                                ${reg.hashSeguro}
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                tablaHTML += `</tbody></table>`;
-                cajaResultados.innerHTML = tablaHTML;
-
-            } catch (error) {
-                cajaResultados.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
-            }
-        });
-    }, 100); 
-
+export const Auditoria = () => {
+    const contenedor = document.createElement('div');
+    contenedor.className = 'auditoria-contenedor'; 
+    contenedor.innerHTML = crearHTML();
+    setTimeout(inicializarComponente, 100);
     return contenedor;
 };

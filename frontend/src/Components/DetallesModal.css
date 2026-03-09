@@ -20,7 +20,7 @@
     border-radius: var(--border-radius-lg);
     padding: 40px;
     position: relative;
-    overflow-y: auto; /* Para que baje si hay mucha info */
+    overflow-y: auto; 
     box-shadow: var(--shadow-xl);
 }
 
@@ -36,7 +36,7 @@
 }
 
 .detalles-btn-cerrar:hover {
-    color: var(--color-secundario); /* Se pone rojo al pasar el mouse */
+    color: var(--color-secundario); 
 }
 
 .detalles-encabezado h1 {
@@ -137,16 +137,14 @@
     margin-top: 5px;
     border-radius: var(--border-radius-sm);
     font-weight: bold;
-    border: none; /* Quitamos bordes por si acaso */
-    
-    /* ¡AQUÍ ESTÁ LA MANITO! */
+    border: none; 
     cursor: pointer; 
-    transition: background-color 0.2s, transform 0.1s; /* Para que el cambio sea suave */
+    transition: background-color 0.2s, transform 0.1s; 
 }
 
 .detalles-btn-descarga-img:hover {
-    filter: brightness(1.1); /* Lo hace un poco más brillante */
-    transform: scale(1.02); /* Lo agranda un 2% para dar sensación de clic */
+    filter: brightness(1.1); 
+    transform: scale(1.02); 
 }
 
 .detalles-link-video {
@@ -186,23 +184,21 @@
     font-weight: bold;
     border: none;
     
-    /* ¡AQUÍ ESTÁ LA MANITO! */
+
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
 }
 
-/* Efecto visual al pasar el mouse por el botón de PDF */
 .detalles-btn-descarga-doc:hover {
     filter: brightness(1.2); 
     transform: scale(1.02);
 }
 
-/* ======== ESTILOS DEL VISOR DE PANTALLA COMPLETA ======== */
 .visor-pantalla-completa {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
     background-color: rgba(0, 0, 0, 0.9);
-    z-index: 9999; /* Por encima del modal normal */
+    z-index: 9999; 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -243,20 +239,19 @@
 
 .icono-video-grande { font-size: 60px; margin-bottom: 20px; }
 
-/* ======== ESTILOS DEL VISOR GIGANTE ======== */
 .visor-pantalla-completa {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85); /* Fondo muy oscuro */
-    z-index: 9999; /* Por encima de absolutamente todo */
+    background-color: rgba(0, 0, 0, 0.85); 
+    z-index: 9999; 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    cursor: pointer; /* Indica que al hacer clic se cierra */
+    cursor: pointer; 
 }
 
 .visor-imagen {
@@ -265,7 +260,7 @@
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
     border: 2px solid white;
-    object-fit: contain; /* Para que no se deforme la imagen */
+    object-fit: contain; 
 }
 
 .visor-texto-cerrar {

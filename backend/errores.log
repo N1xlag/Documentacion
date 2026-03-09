@@ -46,3 +46,14 @@ C:\Users\PC 1\Desktop\Documentacion\backend\src\services\documentosService.js:33
 The column `(not available)` does not exist in the current database.
 [2026-03-05T17:13:38.812Z] ERROR: Error físico: C:\Users\PC 1\Desktop\Documentacion\backend\uploads\1772650299967-358001684-CÃ¡lculos parte trasera anÃ¡lisis (1).pdf Error: ENOENT: no such file or directory, unlink 'C:\Users\PC 1\Desktop\Documentacion\backend\uploads\1772650299967-358001684-CÃ¡lculos parte trasera anÃ¡lisis (1).pdf'
 [2026-03-05T18:39:42.762Z] ERROR: 🔥 Error real al borrar: DriverAdapterError: update or delete on table "Usuario" violates RESTRICT setting of foreign key constraint "Auditoria_usuarioId_fkey" on table "Auditoria"
+[2026-03-09T06:41:04.868Z] ERROR: Error: Formato no permitido. Sube PDF, Office, Imágenes, TXT o ZIP.
+    at fileFilter (C:\Users\Administrator\Desktop\Documentacion\backend\src\server.js:60:12)
+    at wrappedFileFilter (C:\Users\Administrator\Desktop\Documentacion\backend\node_modules\multer\index.js:45:7)
+    at Multipart.<anonymous> (C:\Users\Administrator\Desktop\Documentacion\backend\node_modules\multer\lib\make-middleware.js:155:7)
+    at Multipart.emit (node:events:508:28)
+    at HeaderParser.cb (C:\Users\Administrator\Desktop\Documentacion\backend\node_modules\busboy\lib\types\multipart.js:358:14)
+    at HeaderParser.push (C:\Users\Administrator\Desktop\Documentacion\backend\node_modules\busboy\lib\types\multipart.js:162:20)
+    at SBMH.ssCb [as _cb] (C:\Users\Administrator\Desktop\Documentacion\backend\node_modules\busboy\lib\types\multipart.js:394:37)
+    at feed (C:\Users\Administrator\Desktop\Documentacion\backend\node_modules\streamsearch\lib\sbmh.js:248:10)
+    at SBMH.push (C:\Users\Administrator\Desktop\Documentacion\backend\node_modules\streamsearch\lib\sbmh.js:104:16)
+    at Multipart._write (C:\Users\Administrator\Desktop\Documentacion\backend\node_modules\busboy\lib\types\multipart.js:567:19)

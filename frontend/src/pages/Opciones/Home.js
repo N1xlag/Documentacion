@@ -1,16 +1,14 @@
 import './Home.css';
 
-// Recibimos la función "navegarA" para poder decirle a qué página ir al hacer clic
 export const Home = (navegarA) => {
     const contenedor = document.createElement('div');
-    // Usamos Flexbox para centrar la tarjeta principal en la pantalla
+
     contenedor.style.display = 'flex';
     contenedor.style.justifyContent = 'center';
     contenedor.style.alignItems = 'center';
     contenedor.style.minHeight = '75vh';
     contenedor.style.padding = 'var(--spacing-xl)';
 
-    // La Tarjeta Principal (Usando tu design system)
     const tarjeta = document.createElement('div');
     tarjeta.className = 'card';
     tarjeta.style.width = '100%';
@@ -21,7 +19,7 @@ export const Home = (navegarA) => {
     tarjeta.style.flexDirection = 'column';
     tarjeta.style.gap = 'var(--spacing-lg)';
 
-    // Textos de bienvenida
+
     tarjeta.innerHTML = `
         <div>
             <h1 style="color: var(--color-primario); margin-bottom: var(--spacing-sm); font-size: 28px;">Bienvenido al Sistema</h1>
@@ -29,15 +27,15 @@ export const Home = (navegarA) => {
         </div>
     `;
 
-    // Creamos el contenedor para los botones
+
     const grupoBotones = document.createElement('div');
     grupoBotones.style.display = 'flex';
     grupoBotones.style.flexDirection = 'column';
     grupoBotones.style.gap = 'var(--spacing-md)';
 
-    // Botón 1: Documentar
+
     const btnDocumentar = document.createElement('button');
-    btnDocumentar.className = 'btn btn-primary'; // Tu clase del design-system
+    btnDocumentar.className = 'btn btn-primary'; 
     btnDocumentar.style.padding = 'var(--spacing-md)';
     btnDocumentar.style.fontSize = 'var(--font-size-md)';
     btnDocumentar.innerText = ' DOCUMENTAR NUEVO';
@@ -45,9 +43,9 @@ export const Home = (navegarA) => {
         navegarA('documentar');
     });
 
-    // Botón 2: Respaldos (Buscador)
+
     const btnRespaldos = document.createElement('button');
-    btnRespaldos.className = 'btn btn-secondary'; // Tu clase del design-system
+    btnRespaldos.className = 'btn btn-secondary';
     btnRespaldos.style.padding = 'var(--spacing-md)';
     btnRespaldos.style.fontSize = 'var(--font-size-md)';
     btnRespaldos.innerText = 'BUSCAR RESPALDOS';
@@ -59,17 +57,13 @@ export const Home = (navegarA) => {
     tarjeta.append(grupoBotones);
     contenedor.append(tarjeta);
 
-    // ==========================================
-    // BOTÓN SECRETO DE DUMP (Solo para Admins)
-    // ==========================================
-    // Comprobamos si el usuario actual inició sesión como admin
     const esAdmin = sessionStorage.getItem('isAdmin') === 'true';
 
     if (esAdmin) {
         const btnDump = document.createElement('button');
         btnDump.innerText = 'Respaldo DB'; 
         
-        // Estilos usando las variables de tu Design System
+      
         Object.assign(btnDump.style, {
             position: 'fixed',
             bottom: '20px',
@@ -77,7 +71,7 @@ export const Home = (navegarA) => {
             padding: 'var(--spacing-sm) var(--spacing-md)',
             fontSize: 'var(--font-size-sm)',
             fontWeight: 'var(--font-weight-bold)',
-            backgroundColor: 'var(--color-error)', // El rojo de tu paleta
+            backgroundColor: 'var(--color-error)', 
             color: 'white',
             border: 'none',
             borderRadius: '50px', 
@@ -87,11 +81,11 @@ export const Home = (navegarA) => {
             transition: 'background-color var(--transition-fast)'
         });
 
-        // Efecto hover
+     
         btnDump.addEventListener('mouseover', () => btnDump.style.backgroundColor = '#b91c1c'); // Un rojo más oscuro
         btnDump.addEventListener('mouseout', () => btnDump.style.backgroundColor = 'var(--color-error)');
 
-        // La magia de la descarga
+      
         btnDump.addEventListener('click', () => {
             if (confirm('¿Generar y descargar un Dump completo del sistema?')) {
                 const HOST = window.location.hostname;
@@ -99,7 +93,7 @@ export const Home = (navegarA) => {
             }
         });
 
-        // Lo agregamos a la pantalla
+        
         contenedor.append(btnDump);
     }
 

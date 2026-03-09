@@ -1,23 +1,22 @@
-/* ======== ESTRUCTURA PRINCIPAL ======== */
 .buscador-contenedor {
     display: flex;
-    gap: 40px; /* Mucho espacio para que no se choquen */
+    gap: 40px;
     padding: 30px;
     max-width: 1500px;
     margin: 0 auto;
-    align-items: flex-start; /* Clave para que el sticky funcione */
+    align-items: flex-start; 
 }
 
-/* ======== PANEL DE FILTROS (IZQUIERDA) ======== */
+
 .buscador-panel-filtros {
     background-color: var(--bg-principal, #ffffff);
     border-radius: var(--border-radius-lg);
     padding: 35px;
     box-shadow: var(--shadow-xl);
-    width: 320px; /* Ancho fijo y gordito */
-    flex-shrink: 0; /* ¡MAGIA! Evita que las tarjetas aplasten este panel */
+    width: 320px; 
+    flex-shrink: 0; 
     position: sticky;
-    top: 30px; /* Se queda flotando al bajar */
+    top: 30px; 
     box-sizing: border-box;
 }
 
@@ -25,7 +24,7 @@
     margin-top: 0;
     margin-bottom: 25px;
     font-size: 22px;
-    color: var(--color-tercero, #bf2422); /* Rojo oscuro como en tu captura */
+    color: var(--color-tercero, #bf2422); 
     text-transform: uppercase;
     border-bottom: 2px solid var(--border-color);
     padding-bottom: 15px;
@@ -37,21 +36,19 @@
     margin-bottom: 25px;
 }
 
-/* Arreglamos el desborde de las fechas apilándolas */
 .buscador-rango-fechas {
     display: flex;
-    flex-direction: column; /* Apila una fecha sobre otra */
+    flex-direction: column; 
     gap: 15px;
 }
 
-/* ======== PANEL DE RESULTADOS (DERECHA) ======== */
+
 .buscador-panel-resultados {
-    flex: 1; /* Ocupa todo el resto de la pantalla */
-    min-width: 0; /* Evita que la grilla rompa el diseño */
+    flex: 1; 
+    min-width: 0; 
 }
 
 .buscador-titulo-resultados {
-    /* Si tu fondo es blanco, pon --text-principal. Si es azul oscuro, pon --text-claro */
     color: var(--text-principal, #2c3e50); 
     margin-top: 0;
     margin-bottom: 30px;
@@ -63,14 +60,12 @@
     display: inline-block;
 }
 
-/* La grilla donde van las tarjetas */
 .buscador-rejilla {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); /* Tarjetas bien anchas */
     gap: 30px;
 }
 
-/* Mensaje cuando no hay resultados */
 .buscador-vacio {
     text-align: center;
     color: var(--text-secundario);
@@ -81,5 +76,5 @@
     padding: 40px;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-base);
-    grid-column: 1 / -1; /* Centra el mensaje en toda la grilla */
+    grid-column: 1 / -1;
 }

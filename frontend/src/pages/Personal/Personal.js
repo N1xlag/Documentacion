@@ -1,56 +1,54 @@
 import { api } from '../../services/api.js';
 import { mostrarPopup } from '../../components/Popup.js';
+import './Personal.css';
 
 export const Personal = () => {
     const contenedor = document.createElement('div');
-    // Usamos variables del design system para el espaciado
-    contenedor.style.padding = 'var(--spacing-xl)';
-    contenedor.style.maxWidth = '1000px';
-    contenedor.style.margin = '0 auto';
+    contenedor.className = 'personal-contenedor';
 
     contenedor.innerHTML = `
-        <h2 style="color: var(--color-secundario); border-bottom: 2px solid var(--border-color); padding-bottom: 10px;">
+        <h2 class="personal-titulo">
             Gestión de Personal (Administradores)
         </h2>
-        <p style="color: var(--text-secundario); margin-bottom: 30px;">
+        <p class="personal-descripcion">
             Crea cuentas de acceso para nuevos encargados o revoca el acceso a personal inactivo.
         </p>
 
-        <div style="display: flex; gap: var(--spacing-lg); align-items: flex-start; flex-wrap: wrap;">
+        <div class="personal-layout">
             
-            <div class="card" style="flex: 1; min-width: 300px; padding: var(--spacing-lg);">
-                <h3 style="margin-top: 0; color: var(--color-tercero);">Registrar Nuevo Admin</h3>
+            <div class="card personal-panel-registro">
+                <h3 class="personal-subtitulo">Registrar Nuevo Admin</h3>
                 
-                <label style="display: block; font-weight: bold; margin-top: 15px;">Nombre Completo:</label>
+                <label class="personal-label">Nombre Completo:</label>
                 <input type="text" id="nuevo-nombre" class="input" placeholder="Ej. Ing. Carlos Pérez">
 
-                <label style="display: block; font-weight: bold; margin-top: 15px;">Nombre de Usuario:</label>
+                <label class="personal-label">Nombre de Usuario:</label>
                 <input type="text" id="nuevo-usuario" class="input" placeholder="Ej. carlos_admin">
 
-                <label style="display: block; font-weight: bold; margin-top: 15px;">Contraseña:</label>
+                <label class="personal-label">Contraseña:</label>
                 <input type="password" id="nuevo-clave" class="input" placeholder="Asigna una contraseña segura">
 
-                <label style="display: block; font-weight: bold; margin-top: 15px;">Nivel de Permisos:</label>
+                <label class="personal-label">Nivel de Permisos:</label>
                 <select id="nuevo-rol" class="select">
                     <option value="ADMIN">Encargado (No puede crear cuentas)</option>
                     <option value="SUPERADMIN">Jefe de Planta (Acceso Total)</option>
                 </select>
 
-                <button id="btn-crear-admin" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                <button id="btn-crear-admin" class="btn btn-primary personal-btn-crear">
                     Crear Cuenta de Acceso
                 </button>
             </div>
 
-            <div style="flex: 2; min-width: 350px;">
-                <h3 style="margin-top: 0; color: var(--color-tercero);">Personal Autorizado Actualmente</h3>
-                <div id="lista-usuarios" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+            <div class="personal-panel-lista">
+                <h3 class="personal-subtitulo">Personal Autorizado Actualmente</h3>
+                <div id="lista-usuarios" class="personal-caja-lista">
                     <p>Cargando personal...</p>
                 </div>
             </div>
         </div>
     `;
 
-    setTimeout(async () => {
+    setTimeout(() => {
         const btnCrear = document.getElementById('btn-crear-admin');
         const listaUI = document.getElementById('lista-usuarios');
 
@@ -64,31 +62,29 @@ export const Personal = () => {
                     const esElMismo = usuario.id === idUsuarioActual;
 
                     const tarjeta = document.createElement('div');
-                    // Usamos la tarjeta del design system para que se vea profesional
-                    tarjeta.className = 'card';
-                    tarjeta.style.padding = 'var(--spacing-md)';
-                    tarjeta.style.display = 'flex';
-                    tarjeta.style.justifyContent = 'space-between';
-                    tarjeta.style.alignItems = 'center';
-                    if (esElMismo) tarjeta.style.border = '2px solid var(--color-presente)';
+                    tarjeta.className = `card personal-tarjeta ${esElMismo ? 'es-usuario-actual' : ''}`;
+
+                    const claseNombre = usuario.activo ? 'activo' : 'inactivo';
+                    const etiquetaTu = esElMismo ? '<span class="badge badge-presente personal-badge-margen">(Tú)</span>' : '';
+                    const etiquetaInactivo = !usuario.activo ? '<span class="badge badge-faltante personal-badge-margen">INACTIVO</span>' : '';
+                    const nivelTexto = usuario.rol === 'SUPERADMIN' ? 'Jefe' : 'Encargado';
 
                     tarjeta.innerHTML = `
                         <div>
-                            <strong style="color: ${usuario.activo ? 'var(--text-principal)' : 'var(--text-disabled)'}; font-size: 16px; text-decoration: ${usuario.activo ? 'none' : 'line-through'};">
+                            <strong class="personal-info-nombre ${claseNombre}">
                                 ${usuario.nombre}
                             </strong> 
-                            ${esElMismo ? '<span class="badge badge-presente" style="margin-left: 5px;">(Tú)</span>' : ''}
-                            ${!usuario.activo ? '<span class="badge badge-faltante" style="margin-left: 5px;">INACTIVO</span>' : ''}
-                            <p style="margin: 5px 0 0 0; color: var(--text-secundario); font-size: 14px;">
-                                Usuario: <b>${usuario.usuario}</b> | Nivel: ${usuario.rol === 'SUPERADMIN' ? 'Jefe' : 'Encargado'}
+                            ${etiquetaTu}
+                            ${etiquetaInactivo}
+                            <p class="personal-info-detalles">
+                                Usuario: <b>${usuario.usuario}</b> | Nivel: ${nivelTexto}
                             </p>
                         </div>
                     `;
 
                     if (!esElMismo && usuario.activo) {
                         const btnBorrar = document.createElement('button');
-                        btnBorrar.innerText = 'Revocar';
-                        // Usamos el botón secundario (Rojo intenso en tu paleta)
+                        btnBorrar.innerText = 'Bloquear';
                         btnBorrar.className = 'btn btn-secondary btn-sm';
                         
                         btnBorrar.addEventListener('click', async () => {

@@ -1,20 +1,19 @@
 import { InputGenerico } from '../../components/Input.js';
 import { mostrarPopup } from '../../components/Popup.js';
 import { api } from '../../services/api.js';
-import './CargarDoc.css'; // Usa los mismos estilos
+import './CargarDoc.css'; 
 
 export const EditarDoc = (documentoOriginal, navegarA) => {
     const contenedorPrincipal = document.createElement('div');
     contenedorPrincipal.className = 'cargar-contenedor';
 
-    // ======== LADO IZQUIERDO: GESTIÓN DE ARCHIVOS ========
     const ladoIzq = document.createElement('div');
     ladoIzq.className = 'cargar-lado-izq';
 
     const tituloArchivo = document.createElement('h3');
     tituloArchivo.innerText = ' Gestión de Archivos';
     
-    // --- ARCHIVOS VIEJOS ---
+
     let archivosExistentes = documentoOriginal.archivosAdjuntos ? [...documentoOriginal.archivosAdjuntos] : [];
     
     const contenedorArchivosViejos = document.createElement('div');
@@ -55,7 +54,6 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
     };
     renderizarArchivosExistentes();
 
-    // --- ARCHIVOS NUEVOS ---
     let archivosParaSubir = [];
     
     const tituloNuevos = document.createElement('p');
@@ -112,7 +110,6 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
 
     ladoIzq.append(tituloArchivo, contenedorArchivosViejos, tituloNuevos, inputArchivo, contenedorListaArchivos, textoO, inputVideo);
 
-    // ======== LADO DERECHO: FORMULARIO DINÁMICO ========
     const ladoDer = document.createElement('div');
     ladoDer.className = 'cargar-lado-der';
 
@@ -165,7 +162,7 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
         if (seleccion === 'Producción') {
             contenedorDinamico.append(InputGenerico('Ciclo', 'Ej: Primer Ciclo').contenedor, InputGenerico('Producto', 'Ej: Macetas Biodegradables').contenedor, InputGenerico('Cantidad Producida', 'Ej: 50', 'number').contenedor, InputGenerico('Grupo', 'Ej: Grupo 3').contenedor, InputGenerico('Materia', 'Ej: Topicos Selectos').contenedor, InputGenerico('Observaciones', 'Ej: Les sobro mucho material').contenedor);
         } else if (seleccion === 'Clases / Reuniones') {
-            contenedorDinamico.append(InputGenerico('Evento', '', 'select', ['Clase teórica', 'Clase práctica', 'Reunión', 'Conferencia', 'Otro']).contenedor, InputGenerico('Tema', 'Ej: Modelo de Asignacion').contenedor, InputGenerico('Encargado', 'Ej: Ing. Miguel').contenedor, InputGenerico('Area o Materia', 'Investigacion Operativa 2').contenedor, InputGenerico('Cantidad de Asistentes', 'Ej: 25', 'number').contenedor);
+            contenedorDinamico.append(InputGenerico('Evento', '', 'select', ['Seleccione una...', 'Clase teórica', 'Clase práctica', 'Reunión', 'Conferencia', 'Otro']).contenedor, InputGenerico('Tema', 'Ej: Modelo de Asignacion').contenedor, InputGenerico('Encargado', 'Ej: Ing. Miguel').contenedor, InputGenerico('Area o Materia', 'Investigacion Operativa 2').contenedor, InputGenerico('Cantidad de Asistentes', 'Ej: 25', 'number').contenedor);
         } else if (seleccion === 'Activos / Inventario') {
             contenedorDinamico.append(InputGenerico('Area', 'Ej: Area B').contenedor, InputGenerico('Responsable', 'Nombre del encargado').contenedor);
         } else if (seleccion === 'Administrativo / RRHH') {
@@ -194,11 +191,10 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
     const btnCancelar = document.createElement('button');
     btnCancelar.innerText = 'CANCELAR';
     btnCancelar.className = 'cargar-btn-guardar';
-    btnCancelar.style.background = '#64748b'; // Color gris para cancelar
+    btnCancelar.style.background = '#64748b'; 
     btnCancelar.style.boxShadow = 'none';
     btnCancelar.addEventListener('click', () => navegarA('respaldos'));
 
-    // ======== LÓGICA DE ACTUALIZACIÓN ========
     btnGuardar.addEventListener('click', async () => {
         if (campoTitulo.input.value === '' || campoCategoria.input.value === 'Seleccione una...') {
             mostrarPopup('warning', 'Título y categoría son obligatorios.'); return;
@@ -257,7 +253,7 @@ export const EditarDoc = (documentoOriginal, navegarA) => {
         }
     });
 
-    // CAJA DE ACCIONES PARA ALINEAR LOS BOTONES A LA DERECHA
+
     const cajaAcciones = document.createElement('div');
     cajaAcciones.className = 'cargar-acciones';
     cajaAcciones.append(btnCancelar, btnGuardar);

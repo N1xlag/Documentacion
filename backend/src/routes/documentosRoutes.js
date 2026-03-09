@@ -1,113 +1,150 @@
-// backend/src/routes/documentosRoutes.js
 const express = require('express');
 const router = express.Router();
 const docService = require('../services/documentosService');
 
-// GET: Obtener Papelera (Debe ir arriba para que no se confunda con un ID)
-router.get('/estado/papelera', async (req, res) => {
+
+const validarCamposObligatorios = (body) => {
+    return body.titulo && body.categoria;
+};
+
+const validarFechas = (inicio, fin) => {
+    return inicio && fin;
+};
+
+
+const enviarError = (res, statusCode, mensaje) => {
+    res.status(statusCode).json({ error: mensaje });
+};
+
+const enviarExito = (res, data, statusCode = 200) => {
+    res.status(statusCode).json(data);
+};
+
+
+const configurarDescargaBackup = (res) => {
+    const nombreArchivo = `Respaldo_Seguridad_PPPI_${Date.now()}.json`;
+    res.setHeader('Content-disposition', `attachment; filename=${nombreArchivo}`);
+    res.setHeader('Content-type', 'application/json');
+};
+
+
+const obtenerPapelera = async (req, res) => {
     try {
         const documentos = await docService.obtenerPapelera();
-        res.json(documentos);
+        enviarExito(res, documentos);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        enviarError(res, 500, error.message);
     }
-});
+};
 
-// POST: Votar en la papelera
-router.post('/:id/votar', async (req, res) => {
+const votarPapelera = async (req, res) => {
     try {
         const { usuarioId, decision } = req.body;
         const resultado = await docService.procesarVotoPapelera(req.params.id, usuarioId, decision);
-        res.json(resultado);
+        enviarExito(res, resultado);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        enviarError(res, 400, error.message);
     }
-});
+};
 
-// GET: Reporte de Auditoría
-router.get('/estado/auditoria', async (req, res) => {
+
+
+const obtenerAuditoria = async (req, res) => {
     try {
         const { inicio, fin } = req.query;
-        if (!inicio || !fin) return res.status(400).json({ error: "Faltan fechas" });
+        
+        if (!validarFechas(inicio, fin)) {
+            return enviarError(res, 400, "Faltan fechas");
+        }
         
         const reporte = await docService.obtenerReporteAuditoria(inicio, fin);
-        res.json(reporte);
+        enviarExito(res, reporte);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        enviarError(res, 500, error.message);
     }
-});
+};
 
-router.get('/', async (req, res) => {
-    try {
-        // req.query contiene los filtros enviados por el frontend (?categoria=...&texto=...)
-        const documentos = await docService.obtenerTodos(req.query);
-        res.json(documentos);
-    } catch (error) {
-        console.error('Ruta GET / error:', error);
-        res.status(500).json({ error: 'Error al obtener documentos' });
-    }
-});
-
-// GET: Descargar Respaldo Total de la Base de Datos
-router.get('/estado/backup', async (req, res) => {
+const descargarBackup = async (req, res) => {
     try {
         const backup = await docService.generarBackupTotal();
         
-        // Estas dos líneas le dicen al navegador: "¡No leas esto, fuérzalo a descargar como archivo!"
-        res.setHeader('Content-disposition', `attachment; filename=Respaldo_Seguridad_PPPI_${Date.now()}.json`);
-        res.setHeader('Content-type', 'application/json');
-        
-        // Enviamos el archivo
+        configurarDescargaBackup(res);
         res.send(JSON.stringify(backup, null, 2));
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        enviarError(res, 500, error.message);
     }
-});
+};
 
-// GET: Obtener las gestiones únicas para el filtro
-router.get('/estado/gestiones', async (req, res) => {
+const obtenerGestiones = async (req, res) => {
     try {
         const gestiones = await docService.obtenerGestiones();
-        res.json(gestiones);
+        enviarExito(res, gestiones);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        enviarError(res, 500, error.message);
     }
-});
+};
 
-router.post('/', async (req, res) => {
+
+
+const obtenerDocumentos = async (req, res) => {
     try {
-        if (!req.body.titulo || !req.body.categoria) {
-            return res.status(400).json({ error: 'Faltan campos obligatorios' }); // Validación básica
+        const documentos = await docService.obtenerTodos(req.query);
+        enviarExito(res, documentos);
+    } catch (error) {
+        console.error('Ruta GET / error:', error);
+        enviarError(res, 500, 'Error al obtener documentos');
+    }
+};
+
+const crearDocumento = async (req, res) => {
+    try {
+        if (!validarCamposObligatorios(req.body)) {
+            return enviarError(res, 400, 'Faltan campos obligatorios');
         }
+        
         const nuevoDoc = await docService.crearDocumento(req.body);
-        res.status(201).json({ mensaje: 'Guardado con éxito', data: nuevoDoc });
+        enviarExito(res, { mensaje: 'Guardado con éxito', data: nuevoDoc }, 201);
     } catch (error) {
         console.error('Ruta POST / error:', error);
-        res.status(500).json({ error: 'Error al guardar el documento' });
+        enviarError(res, 500, 'Error al guardar el documento');
     }
-});
+};
 
-router.put('/:id', async (req, res) => {
+const actualizarDocumento = async (req, res) => {
     try {
         const docActualizado = await docService.actualizarDocumento(req.params.id, req.body);
-        res.json({ mensaje: 'Actualizado con éxito', documento: docActualizado });
+        enviarExito(res, { mensaje: 'Actualizado con éxito', documento: docActualizado });
     } catch (error) {
         console.error('Ruta PUT error:', error);
-        res.status(500).json({ error: 'Error al actualizar' });
+        enviarError(res, 500, 'Error al actualizar');
     }
-});
+};
 
-// DELETE: Eliminar (Ahora recibe quién quiere borrar)
-router.delete('/:id', async (req, res) => {
+const eliminarDocumento = async (req, res) => {
     try {
         const { usuarioId } = req.body;
-        // Le pasamos el ID del documento y el ID del usuario al servicio
         const resultado = await docService.eliminarDocumento(req.params.id, usuarioId);
-        res.json(resultado);
+        enviarExito(res, resultado);
     } catch (error) {
         console.error('Ruta DELETE error:', error.message);
-        res.status(500).json({ error: error.message });
+        enviarError(res, 500, error.message);
     }
-});
+};
+
+
+
+router.get('/estado/papelera', obtenerPapelera);
+router.get('/estado/auditoria', obtenerAuditoria);
+router.get('/estado/backup', descargarBackup);
+router.get('/estado/gestiones', obtenerGestiones);
+
+router.get('/', obtenerDocumentos);
+router.post('/', crearDocumento);
+router.put('/:id', actualizarDocumento);
+router.delete('/:id', eliminarDocumento);
+
+
+router.post('/:id/votar', votarPapelera);
+
 
 module.exports = router;

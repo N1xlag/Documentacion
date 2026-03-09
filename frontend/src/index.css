@@ -1,13 +1,11 @@
-/* src/index.css (o App.css) */
 :root {
-    /* Paleta de colores inspirada en tus compañeros */
-    --bg-oscuro: #1b2e35; /* Azul petróleo muy oscuro para el fondo */
-    --color-primario: #f1a044; /* Naranja claro */
-    --color-secundario: #d95e31; /* Naranja medio */
-    --color-tercero: #bf2422; /* Rojo oscuro */
+    --bg-oscuro: #1b2e35;
+    --color-primario: #f1a044; 
+    --color-secundario: #d95e31; 
+    --color-tercero: #bf2422; 
     
-    --bg-principal: #ffffff; /* Cajas blancas */
-    --bg-secundario: #f8f9fa; /* Cajas gris muy clarito */
+    --bg-principal: #ffffff; 
+    --bg-secundario: #f8f9fa; 
     
     --text-claro: #ffffff;
     --text-principal: #2c3e50;
@@ -25,12 +23,11 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-oscuro); /* ¡El fondo oscuro! */
+    background-color: var(--bg-oscuro);
     color: var(--text-principal);
     box-sizing: border-box;
 }
 
-/* Estilo para los botones genéricos verdes que tenías, los pasamos a naranja/rojo */
 .btn-primary {
     background: linear-gradient(135deg, var(--color-primario) 0%, var(--color-tercero) 100%) !important;
     color: white !important;

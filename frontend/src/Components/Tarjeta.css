@@ -14,10 +14,9 @@
     box-shadow: var(--shadow-xl);
 }
 
-/* La burbuja de categoría (estilo verde de tu foto) */
 .tarjeta-categoria-burbuja {
     align-self: flex-start;
-    background-color: #28a745; /* Verde corporativo */
+    background-color: #28a745;
     color: white;
     padding: 6px 14px;
     border-radius: 20px;
@@ -41,7 +40,6 @@
     margin: 0 0 20px 0;
 }
 
-/* LA CAJITA GRIS PARA LOS DETALLES */
 .tarjeta-caja-detalles {
     background-color: #f8fafc;
     border-radius: 8px;
@@ -66,10 +64,9 @@
     color: #64748b;
 }
 
-/* Botón ancho gris oscuro como en tu foto */
 .tarjeta-btn-detalles {
     width: 100%;
-    background-color: #475569; /* Gris pizarra oscuro */
+    background-color: #475569; 
     color: white;
     border: none;
     padding: 12px;
@@ -78,7 +75,7 @@
     font-size: 15px;
     cursor: pointer;
     transition: background-color 0.2s;
-    margin-top: auto; /* Empuja el botón siempre al fondo */
+    margin-top: auto;
 }
 
 .tarjeta-btn-detalles:hover {

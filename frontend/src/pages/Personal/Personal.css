@@ -1,0 +1,95 @@
+.personal-contenedor {
+    padding: var(--spacing-xl, 30px);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.personal-titulo {
+    color: var(--color-secundario, #b91c1c);
+    border-bottom: 2px solid var(--border-color, #e2e8f0);
+    padding-bottom: 10px;
+}
+
+.personal-descripcion {
+    color: var(--text-secundario, #64748b);
+    margin-bottom: 30px;
+}
+
+.personal-layout {
+    display: flex;
+    gap: var(--spacing-lg, 20px);
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+
+.personal-panel-registro {
+    flex: 1;
+    min-width: 300px;
+    padding: var(--spacing-lg, 20px);
+}
+
+.personal-subtitulo {
+    margin-top: 0;
+    color: var(--color-tercero, #0f172a);
+}
+
+.personal-label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.personal-btn-crear {
+    width: 100%;
+    margin-top: 20px;
+}
+
+
+.personal-panel-lista {
+    flex: 2;
+    min-width: 350px;
+}
+
+.personal-caja-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+
+.personal-tarjeta {
+    padding: var(--spacing-md, 15px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.personal-tarjeta.es-usuario-actual {
+    border: 2px solid var(--color-presente, #10b981);
+}
+
+.personal-info-nombre {
+    font-size: 16px;
+}
+
+.personal-info-nombre.activo {
+    color: var(--text-principal, #0f172a);
+    text-decoration: none;
+}
+
+.personal-info-nombre.inactivo {
+    color: var(--text-disabled, #94a3b8);
+    text-decoration: line-through;
+}
+
+.personal-badge-margen {
+    margin-left: 5px;
+}
+
+.personal-info-detalles {
+    margin: 5px 0 0 0;
+    color: var(--text-secundario, #64748b);
+    font-size: 14px;
+}

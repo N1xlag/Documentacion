@@ -1,29 +1,25 @@
-/* ══════════════════════════════════════════════════════════════════════════
-   VARIABLES GLOBALES - Sistema de Diseño PPPI
-   ══════════════════════════════════════════════════════════════════════════ */
-
 :root {
-  /* ── Paleta Principal ────────────────────────────────────────────────── */
-  --color-primario: #f1a044;      /* Naranja cálido */
-  --color-secundario: #bf2422;    /* Rojo intenso */
-  --color-tercero: #224251;       /* Azul oscuro */
-  
-  /* ── Variantes del Primario ──────────────────────────────────────────── */
+
+  --color-primario: #f1a044;      
+  --color-secundario: #bf2422;  
+  --color-tercero: #224251;    
+
+ 
   --color-primario-hover: #e89535;
   --color-primario-light: #f9c47e;
   --color-primario-dark: #d88f32;
   
-  /* ── Variantes del Secundario ────────────────────────────────────────── */
+
   --color-secundario-hover: #a11f1d;
   --color-secundario-light: #e85755;
   --color-secundario-dark: #8f1a19;
   
-  /* ── Variantes del Tercero ───────────────────────────────────────────── */
+
   --color-tercero-hover: #1a3340;
   --color-tercero-light: #2d5466;
   --color-tercero-dark: #152a35;
   
-  /* ── Grises y Neutros ────────────────────────────────────────────────── */
+
   --color-gris-100: #f8f9fa;
   --color-gris-200: #e9ecef;
   --color-gris-300: #dee2e6;
@@ -34,7 +30,7 @@
   --color-gris-800: #343a40;
   --color-gris-900: #212529;
   
-  /* ── Estados ─────────────────────────────────────────────────────────── */
+
   --color-presente: #28a745;
   --color-ausente: #ffc107;
   --color-faltante: #dc3545;
@@ -43,30 +39,29 @@
   --color-warning: #ffc107;
   --color-info: #17a2b8;
   
-  /* ── Fondos ──────────────────────────────────────────────────────────── */
+
   --bg-principal: #ffffff;
   --bg-secundario: var(--color-gris-100);
   --bg-oscuro: var(--color-tercero);
   
-  /* ── Texto ───────────────────────────────────────────────────────────── */
+
   --text-principal: var(--color-gris-900);
   --text-secundario: var(--color-gris-700);
   --text-claro: #ffffff;
   --text-disabled: var(--color-gris-500);
   
-  /* ── Bordes ──────────────────────────────────────────────────────────── */
+
   --border-color: var(--color-gris-300);
   --border-radius: 8px;
   --border-radius-sm: 4px;
   --border-radius-lg: 12px;
-  
-  /* ── Sombras ─────────────────────────────────────────────────────────── */
+
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.16);
   --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.20);
   
-  /* ── Espaciado ───────────────────────────────────────────────────────── */
+
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
@@ -74,7 +69,7 @@
   --spacing-xl: 32px;
   --spacing-2xl: 48px;
   
-  /* ── Tipografía ──────────────────────────────────────────────────────── */
+
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-size-xs: 12px;
   --font-size-sm: 14px;
@@ -88,15 +83,12 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   
-  /* ── Transiciones ────────────────────────────────────────────────────── */
+
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
   --transition-slow: 350ms ease;
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   RESET Y BASE
-   ══════════════════════════════════════════════════════════════════════════ */
 
 * {
   margin: 0;
@@ -114,11 +106,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   COMPONENTES REUTILIZABLES
-   ══════════════════════════════════════════════════════════════════════════ */
-
-/* ── Botones ─────────────────────────────────────────────────────────────── */
 
 .btn {
   display: inline-flex;
@@ -209,7 +196,7 @@ body {
   font-size: var(--font-size-lg);
 }
 
-/* ── Inputs y Formularios ────────────────────────────────────────────────── */
+
 
 .input,
 .select,
@@ -241,7 +228,7 @@ body {
   opacity: 0.6;
 }
 
-/* Quitar flechas de input number */
+
 .input[type="number"]::-webkit-outer-spin-button,
 .input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -252,7 +239,7 @@ body {
   -moz-appearance: textfield;
 }
 
-/* ── Cards ───────────────────────────────────────────────────────────────── */
+
 
 .card {
   background-color: var(--bg-principal);
@@ -278,7 +265,7 @@ body {
   padding: var(--spacing-lg);
 }
 
-/* ── Badges ──────────────────────────────────────────────────────────────── */
+
 
 .badge {
   display: inline-flex;
@@ -306,7 +293,7 @@ body {
   color: var(--color-faltante);
 }
 
-/* ── Alerts ──────────────────────────────────────────────────────────────── */
+
 
 .alert {
   padding: var(--spacing-md);

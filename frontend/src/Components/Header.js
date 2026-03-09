@@ -109,7 +109,6 @@ export const Header = (onNavigate) => {
         btnAuditoria.addEventListener('click', () => onNavigate('auditoria'));
     }
 
-    // Botón Admin / Salir
     const btnAdmin = document.createElement('button');
     btnAdmin.innerText = esAdmin ? 'SALIR' : 'ADMIN';
     btnAdmin.style.padding = '10px 20px';
@@ -121,6 +120,13 @@ export const Header = (onNavigate) => {
     btnAdmin.style.cursor = 'pointer';
 
     btnAdmin.addEventListener('click', () => {
+        if (esAdmin) {
+            // SI ESTÁ SALIENDO: Borramos la memoria de la pestaña actual para que el App.js lo mande a Inicio
+            sessionStorage.removeItem('ultimaPestaña');
+            sessionStorage.removeItem('ultimaPestañaDatos');
+        }
+        
+        // Llamamos al modal de login (que si es admin, cerrará la sesión y hará reload)
         mostrarLoginAdmin(() => { window.location.reload(); });
     });
 

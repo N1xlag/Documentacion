@@ -1,12 +1,14 @@
 import './AdminLoginModal.css';
+import { mostrarPopup } from './Popup.js';
+
 
 export const mostrarLoginAdmin = (alIniciarSesion) => {
-    // 1. CERRAR SESIÓN: Limpieza absoluta de la memoria
+
     if (sessionStorage.getItem('isAdmin') === 'true') {
         sessionStorage.removeItem('isAdmin');
         sessionStorage.removeItem('adminNombre');
         sessionStorage.removeItem('adminId');
-        sessionStorage.removeItem('adminRol'); // <-- LA CURA AL ERROR FANTASMA
+        sessionStorage.removeItem('adminRol'); 
         alIniciarSesion(); 
         return;
     }
@@ -18,7 +20,7 @@ export const mostrarLoginAdmin = (alIniciarSesion) => {
     caja.className = 'admin-caja';
 
     const titulo = document.createElement('h2');
-    titulo.innerText = '🔒 Acceso Administrador';
+    titulo.innerText = ' Acceso Administrador';
     titulo.style.marginBottom = '20px';
 
     const inputUsuario = document.createElement('input');
@@ -46,7 +48,6 @@ export const mostrarLoginAdmin = (alIniciarSesion) => {
     btnIngresar.innerText = 'Ingresar';
     btnIngresar.className = 'admin-btn admin-btn-ingresar';
     
-    // LÓGICA DE VERIFICACIÓN
     btnIngresar.addEventListener('click', async () => {
         btnIngresar.innerText = 'Verificando...';
         
@@ -61,7 +62,7 @@ export const mostrarLoginAdmin = (alIniciarSesion) => {
             });
 
             if (!respuesta.ok) {
-                mensajeError.innerText = 'Usuario o contraseña incorrectos ❌';
+                mensajeError.innerText = 'Usuario o contraseña incorrectos ';
                 inputClave.value = '';
                 btnIngresar.innerText = 'Ingresar';
                 return;
@@ -69,20 +70,18 @@ export const mostrarLoginAdmin = (alIniciarSesion) => {
 
             const datos = await respuesta.json(); 
 
-            // 2. INICIAR SESIÓN: Guardamos los 4 datos sincronizados
             sessionStorage.setItem('isAdmin', 'true');
             sessionStorage.setItem('adminNombre', datos.nombre);
             sessionStorage.setItem('adminId', datos.id);
-            sessionStorage.setItem('adminRol', datos.rol); // <-- GUARDAMOS EL ROL CORRECTO
-            
+            sessionStorage.setItem('adminRol', datos.rol);
             overlay.remove();
-            alIniciarSesion(); 
-            
-            // Un pequeño saludo para confirmar qué nivel de acceso te dio el sistema
-            alert(`¡Bienvenido, ${datos.nombre}!\nNivel de acceso: ${datos.rol === 'SUPERADMIN' ? '👑 JEFE' : '👷‍♂️ ENCARGADO'}`);
+            mostrarPopup('success', `¡Bienvenido, ${datos.nombre}! Nivel: ${datos.rol === 'SUPERADMIN' ? 'JEFE' : 'ENCARGADO'}`);
+            setTimeout(() => {
+                alIniciarSesion(); 
+            }, 1500);
 
         } catch (error) {
-            mensajeError.innerText = 'Error al conectar con el servidor ❌';
+            mensajeError.innerText = 'Error al conectar con el servidor ';
             btnIngresar.innerText = 'Ingresar';
         }
     });

@@ -2,7 +2,7 @@
 
 export const InputGenerico = (texto, subtexto, tipo = 'text', opciones = []) => {
     const contenedor = document.createElement('div');
-    contenedor.className = 'form-group'; // Usaremos CSS para darle estilo
+    contenedor.className = 'form-group'; 
 
     const label = document.createElement('label');
     label.innerText = texto;
@@ -22,7 +22,7 @@ export const InputGenerico = (texto, subtexto, tipo = 'text', opciones = []) => 
         input.placeholder = subtexto;
     }
     
-    input.className = 'form-input'; // Clase para el CSS global
+    input.className = 'form-input';
     input.dataset.nombre = texto; 
 
     contenedor.append(label, input);

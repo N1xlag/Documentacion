@@ -1,4 +1,3 @@
-// src/main.js
 import './index.css';
 import './desing.css';
 import { App } from './App.js';
